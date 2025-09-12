@@ -1,28 +1,17 @@
-<template>
-  <div class="sign-in">
-    <h1>Вход</h1>
-    <form @submit.prevent="handleSignIn">
-      <div class="form-control">
-        <label>Email:</label>
-        <input type="email" v-model="email" required />
-      </div>
-
-      <div class="form-control">
-        <label>Пароль:</label>
-        <input type="password" v-model="password" required />
-      </div>
-
-      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-
-      <button type="submit">Войти</button>
-    </form>
-  </div>
-</template>
-
 <script>
-import { loginUser } from '@/services/auth'
+import { loginUser } from '@/api/auth'
+import { RouterLink } from 'vue-router'
+import Button from '@/components/common/Button.vue'
+import Input from '@/components/common/Input.vue'
+import AuthLink from '@/components/auth/AuthLink.vue'
 
 export default {
+  components: {
+    Button,
+    RouterLink,
+    Input,
+    AuthLink,
+  },
   data() {
     return {
       email: '',
@@ -31,10 +20,9 @@ export default {
     }
   },
   methods: {
-    async handleSignIn() {
+    async handleClickSignIn() {
       try {
         const user = await loginUser(this.email, this.password)
-        console.log('Signed in:', user)
         this.$router.push('/tasks')
       } catch (error) {
         this.errorMessage = error.message
@@ -44,16 +32,70 @@ export default {
 }
 </script>
 
+<template>
+  <div class="sign-in-wrapper">
+    <div class="sign-in">
+      <h2 class="title">Sign In</h2>
+      <form @submit.prevent="handleClickSignIn" class="form">
+        <Input v-model="email" type="email" label="Email" placeholder="Enter your email" required />
+        <Input
+          v-model="password"
+          type="password"
+          label="Password"
+          placeholder="Enter your password"
+          required
+        />
+
+        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+
+        <Button type="submit">Sign In</Button>
+      </form>
+
+      <AuthLink>
+        Don't have an account yet?
+        <RouterLink to="/register">Register</RouterLink>
+      </AuthLink>
+    </div>
+  </div>
+</template>
+
 <style scoped>
-.sign-in {
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
+.sign-in-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
 }
+.sign-in {
+  width: var(--container-narrow);
+  padding: var(--space-3xl);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--fw-semibold);
+  color: var(--color-primary);
+  margin-bottom: var(--space-md);
+  text-align: center;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: var(--space-2xl);
+}
+
 .error {
-  color: red;
-  font-size: 14px;
+  color: var(--color-accent-warning);
+  font-size: var(--font-size-sm);
+  margin-top: var(--space-xs);
 }
 </style>

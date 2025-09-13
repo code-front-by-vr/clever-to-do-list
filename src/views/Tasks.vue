@@ -36,7 +36,7 @@ export default {
     <!-- !TODO: TaskCalendar component -->
     <TaskCalendar />
 
-    <h2 class="tasks-title">{{ tasks.length }} tasks today</h2>
+    <h2 class="tasks-title">Tasks today: {{ tasks.length }}</h2>
 
     <!-- !TODO: TasksList component -->
     <TaskList :tasks />

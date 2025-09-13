@@ -79,7 +79,7 @@ export default {
 .title-decoration::after {
   content: '';
   position: absolute;
-  top: calc(-1 * var(--space-2xs));
+  top: calc(-1 * 2px);
   left: 50%;
   transform: translateX(-50%);
   width: var(--space-4xl);

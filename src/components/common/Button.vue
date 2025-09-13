@@ -15,7 +15,7 @@ export default {
 </script>
 
 <template>
-  <button :class="['button', variant]" :type>
+  <button :class="['button', `button-${variant}`]" :type>
     <slot></slot>
   </button>
 </template>
@@ -32,22 +32,22 @@ export default {
   align-items: center;
   justify-content: center;
 }
-.button.main {
+.button.button-main {
   background: var(--color-primary);
   color: var(--color-text-inverse);
   box-shadow: 0 4px 12px var(--shadow-primary);
 }
-.button.main:hover {
+.button.button-main:hover {
   transform: scale(1.03);
   box-shadow: 0 8px 20px var(--shadow-primary-hover);
 }
 
-.button.light {
+.button.button-light {
   background: transparent;
   color: var(--color-primary);
   border: 2px solid var(--color-primary);
 }
-.button.light:hover {
+.button.button-light:hover {
   background: rgba(108, 99, 255, 0.1);
   transform: scale(1.03);
 }

@@ -31,7 +31,7 @@
   /* Layout */
   --container-narrow: 400px;
   --container-normal: 600px;
-  --container-medium: 800px;
+  --container-medium: 768px;
   --container-wide: 1200px;
   --container-full: 100%;
 
@@ -60,21 +60,20 @@
   --radius-full: 100%;
 
   /* Spacing */
-  --space-2xs: 2px;
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 12px;
-  --space-lg: 16px;
-  --space-xl: 20px;
-  --space-2xl: 24px;
-  --space-3xl: 32px;
-  --space-4xl: 40px;
-  --space-5xl: 48px;
-  --space-6xl: 80px;
-  --space-7xl: 96px;
-  --space-8xl: 128px;
-  --space-9xl: 160px;
-  --space-10xl: 200px;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.75rem;
+  --space-lg: 1rem;
+  --space-xl: 1.25rem;
+  --space-2xl: 1.5rem;
+  --space-3xl: 2rem;
+  --space-4xl: 2.5rem;
+  --space-5xl: 3rem;
+  --space-6xl: 5rem;
+  --space-7xl: 6rem;
+  --space-8xl: 8rem;
+  --space-9xl: 10rem;
+  --space-10xl: 12.5rem;
 }
 
 *,
@@ -82,9 +81,9 @@
 *::after {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
   border: 0;
   text-decoration: none;
+  box-sizing: border-box;
   list-style: none;
 }
 

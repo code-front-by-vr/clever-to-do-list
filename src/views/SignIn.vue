@@ -3,14 +3,12 @@ import { loginUser } from '@/api/auth'
 import { RouterLink } from 'vue-router'
 import Button from '@/components/common/Button.vue'
 import Input from '@/components/common/Input.vue'
-import AuthLink from '@/components/auth/AuthLink.vue'
 
 export default {
   components: {
     Button,
     RouterLink,
     Input,
-    AuthLink,
   },
   data() {
     return {
@@ -51,10 +49,10 @@ export default {
         <Button type="submit">Sign In</Button>
       </form>
 
-      <AuthLink>
+      <p class="auth-link">
         Don't have an account yet?
         <RouterLink to="/register">Register</RouterLink>
-      </AuthLink>
+      </p>
     </div>
   </div>
 </template>
@@ -97,5 +95,27 @@ export default {
   color: var(--color-accent-warning);
   font-size: var(--font-size-sm);
   margin-top: var(--space-xs);
+}
+
+.auth-link {
+  text-align: center;
+  margin-top: var(--space-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
+
+.auth-link a {
+  color: var(--color-primary);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.auth-link a:hover {
+  color: var(--color-secondary);
+}
+
+.auth-link a:visited {
+  color: var(--color-primary);
 }
 </style>

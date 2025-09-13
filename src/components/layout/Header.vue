@@ -19,7 +19,7 @@ export default {
   methods: {
     async logout() {
       await logoutUser()
-      this.$router.push('/sign-in')
+      location.href = '/sign-in'
     },
   },
 }

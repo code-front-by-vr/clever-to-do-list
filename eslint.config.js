@@ -22,12 +22,7 @@ export default defineConfig([
     '**/.husky/**',
     '**/.prettier*',
     '**/.vscode/**',
-    '**/index.html',
     '**/jsconfig.json',
-    '**/package-lock.json',
-    '**/package.json',
-    '**/README.md',
-    '**/vite.config.js',
     '**/eslint.config.js',
   ]),
 

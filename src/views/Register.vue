@@ -3,7 +3,6 @@ import { registerUser } from '@/api/auth'
 import { RouterLink } from 'vue-router'
 import Button from '@/components/common/Button.vue'
 import Input from '@/components/common/Input.vue'
-import AuthLink from '@/components/auth/AuthLink.vue'
 
 export default {
   name: 'Registration',
@@ -11,7 +10,6 @@ export default {
     RouterLink,
     Button,
     Input,
-    AuthLink,
   },
   data() {
     return {
@@ -26,12 +24,11 @@ export default {
     async handleClickRegister() {
       this.errorMessage = ''
 
-      if (this.password !== this.confirmPassword) {
-        this.errorMessage = 'Passwords do not match!'
-        return
-      }
-
       try {
+        if (this.password !== this.confirmPassword) {
+          throw new Error('Passwords do not match!')
+        }
+
         const user = await registerUser(this.email, this.password)
 
         this.email = ''
@@ -73,10 +70,10 @@ export default {
         <Button type="submit">Register</Button>
       </form>
 
-      <AuthLink>
+      <p class="auth-link">
         Already have an account?
         <RouterLink to="/sign-in">Sign In</RouterLink>
-      </AuthLink>
+      </p>
     </div>
   </div>
 </template>
@@ -119,5 +116,27 @@ export default {
   color: var(--color-accent-warning);
   font-size: var(--font-size-sm);
   margin-top: var(--space-xs);
+}
+
+.auth-link {
+  text-align: center;
+  margin-top: var(--space-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
+
+.auth-link a {
+  color: var(--color-primary);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.auth-link a:hover {
+  color: var(--color-secondary);
+}
+
+.auth-link a:visited {
+  color: var(--color-primary);
 }
 </style>

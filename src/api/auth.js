@@ -1,5 +1,9 @@
-import { auth } from '@/api/firebase'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth'
+import {
+  auth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from '@/api/firebase'
 
 export async function registerUser(email, password) {
   const userCredential = await createUserWithEmailAndPassword(auth, email, password)

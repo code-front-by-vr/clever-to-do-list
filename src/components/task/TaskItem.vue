@@ -2,22 +2,22 @@
 import { Circle, CircleCheck } from 'lucide-vue-next'
 export default {
   name: 'TaskItem',
-  components: {
-    Circle,
-    CircleCheck,
-  },
   props: {
     task: {
       type: Object,
     },
+  },
+  components: {
+    Circle,
+    CircleCheck,
   },
 }
 </script>
 
 <template>
   <div class="task-item">
-    <Circle v-if="!task.done" class="task-item-icon" />
-    <CircleCheck v-else class="task-item-icon task-done" />
+    <CircleCheck v-if="task.done" class="task-item-icon task-done" />
+    <Circle v-else class="task-item-icon" />
     <h4>{{ task.title }}</h4>
   </div>
 </template>

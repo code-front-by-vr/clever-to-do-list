@@ -3,7 +3,6 @@ import { Eye, EyeOff } from 'lucide-vue-next'
 
 export default {
   name: 'Input',
-  components: { Eye, EyeOff },
   props: {
     modelValue: String,
     type: {
@@ -23,6 +22,7 @@ export default {
       default: false,
     },
   },
+
   emits: ['update:modelValue'],
   data() {
     return {
@@ -51,6 +51,7 @@ export default {
       this.showPassword = !this.showPassword
     },
   },
+  components: { Eye, EyeOff },
 }
 </script>
 
@@ -64,7 +65,6 @@ export default {
         type="button"
         class="toggle-password"
         @click="handleTogglePassword"
-        tabindex="-1"
       >
         <Eye v-if="!showPassword" class="icon" />
         <EyeOff v-else class="icon" />
@@ -102,7 +102,7 @@ input {
   transition: all 0.3s ease;
 }
 
-input:focus {
+input:focus-visible {
   outline: none;
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-md);

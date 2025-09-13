@@ -2,13 +2,13 @@
 import TaskItem from '@/components/task/TaskItem.vue'
 export default {
   name: 'TaskList',
-  components: {
-    TaskItem,
-  },
   props: {
     tasks: {
       type: Array,
     },
+  },
+  components: {
+    TaskItem,
   },
 }
 </script>

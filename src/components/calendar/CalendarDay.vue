@@ -11,8 +11,7 @@ export default {
 
 <template>
   <div class="day-info">
-    <span class="day-name">{{ day.weekday }}</span>
-    <span class="day-number">{{ day.date }}</span>
+    <div class="day-label" :data-weekday="day.weekday" :data-date="day.date"></div>
 
     <div class="status-dots">
       <div class="status-dot"></div>
@@ -35,15 +34,24 @@ export default {
   border-radius: var(--radius-md);
 }
 
-.day-name {
-  font-size: var(--font-size-sm);
-  font-weight: var(--fw-medium);
+.day-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.day-number {
-  color: var(--color-text-primary);
+.day-label::before {
+  content: attr(data-weekday);
+  font-size: var(--font-size-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-muted);
+}
+
+.day-label::after {
+  content: attr(data-date);
   font-size: var(--font-size-lg);
   font-weight: var(--fw-medium);
+  color: var(--color-text-primary);
 }
 .status-dots {
   display: flex;

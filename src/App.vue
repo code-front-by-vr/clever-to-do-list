@@ -21,9 +21,5 @@ export default {
   max-width: var(--container-wide);
   margin: 0 auto;
   padding: 0 var(--space-lg);
-  /* display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: var(--space-lg); */
 }
 </style>

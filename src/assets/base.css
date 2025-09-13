@@ -1,34 +1,97 @@
-/* color palette from <https://github.com/vuejs/theme> */
 :root {
-}
+  /* Brand colors */
+  --color-primary: #6c63ff; /*  main accent */
+  --color-secondary: #00cfff; /* secondary accent */
 
-/* semantic color variables for this project */
-:root {
+  /* Backgrounds */
+  --color-bg: #f7f7f7; /* background */
+  --color-surface: #ffffff; /* cards, blocks on background */
+  --color-gradient: linear-gradient(135deg, var(--color-bg) 0%, #e8e8ff 100%);
+
+  /* Text */
+  --color-text-primary: #2e2e3a; /* headings, main text */
+  --color-text-secondary: #7a8594; /* descriptions, subheadings */
+  --color-text-muted: #a9b2bd; /* dates, placeholders */
+  --color-text-inverse: #ffffff; /* text on dark or accent background */
+
+  /* Task status */
+  --color-task-done: #22c55e; /* completed tasks */
+  --color-task-pending: #6366f1; /* pending tasks */
+
+  /* System / feedback */
+  --color-accent-warning: #ff6b35; /* errors, toasts */
+
+  /* Shadows */
+  --shadow-primary: rgba(108, 99, 255, 0.3);
+  --shadow-primary-hover: rgba(108, 99, 255, 0.45);
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+
+  /* Layout */
+  --container-narrow: 400px;
+  --container-normal: 600px;
+  --container-medium: 768px;
+  --container-wide: 1200px;
+  --container-full: 100%;
+
+  /* Typography */
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-md: 18px;
+  --font-size-lg: 20px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 32px;
+  --font-size-3xl: 40px;
+  --font-size-4xl: 48px;
+  --font-size-5xl: 64px;
+
+  /* Font weights */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 16px;
+  --radius-full: 100%;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.75rem;
+  --space-lg: 1rem;
+  --space-xl: 1.25rem;
+  --space-2xl: 1.5rem;
+  --space-3xl: 2rem;
+  --space-4xl: 2.5rem;
+  --space-5xl: 3rem;
+  --space-6xl: 5rem;
+  --space-7xl: 6rem;
+  --space-8xl: 8rem;
+  --space-9xl: 10rem;
+  --space-10xl: 12.5rem;
 }
 
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
   margin: 0;
+  padding: 0;
+  border: 0;
+  text-decoration: none;
+  box-sizing: border-box;
+  list-style: none;
 }
 
 body {
-  min-height: 100vh;
-  line-height: 1.6;
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    'Fira Sans',
-    'Droid Sans',
-    'Helvetica Neue',
-    sans-serif;
+  font-display: swap;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: Roboto, Inter, system-ui, sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

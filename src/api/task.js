@@ -1,5 +1,5 @@
-import {addDoc, getDocs, deleteDoc, doc, Timestamp, updateDoc} from 'firebase/firestore/lite'
-import {getTasksCollection} from './task-collections'
+import { addDoc, getDocs, deleteDoc, doc, Timestamp, updateDoc } from 'firebase/firestore/lite'
+import { getTasksCollection } from '@/api/task-collections'
 
 export async function addTask(userId, task) {
   const docRef = await addDoc(getTasksCollection(userId), {
@@ -14,7 +14,7 @@ export async function getTasks(userId) {
   const snapshot = await getDocs(getTasksCollection(userId))
   const tasks = []
 
-  snapshot.forEach(doc => tasks.push({id: doc.id, ...doc.data()}))
+  snapshot.forEach(doc => tasks.push({ id: doc.id, ...doc.data() }))
 
   return tasks
 }
@@ -24,7 +24,7 @@ export async function deleteTask(userId, taskId) {
 }
 
 export async function updateTask(userId, task) {
-  const {id, ...fields} = task
+  const { id, ...fields } = task
   const taskDoc = doc(getTasksCollection(userId), id)
 
   if (fields.date instanceof Date) {

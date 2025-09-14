@@ -1,25 +1,33 @@
 <script>
 import { RouterLink } from 'vue-router'
-import { logoutUser } from '@/api/auth'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
     RouterLink,
   },
-  data() {
-    return {
-      links: [
-        { to: '/', text: 'Home' },
-        { to: '/sign-in', text: 'Sign In' },
-        { to: '/register', text: 'Register' },
-        { to: '/tasks', text: 'Tasks' },
-      ],
-    }
+  computed: {
+    ...mapGetters('auth', ['isAuthenticated']),
+    navLinks() {
+      if (this.isAuthenticated) {
+        return [
+          { to: '/', text: 'Home' },
+          { to: '/tasks', text: 'Tasks' },
+        ]
+      } else {
+        return [
+          { to: '/', text: 'Home' },
+          { to: '/sign-in', text: 'Sign In' },
+          { to: '/register', text: 'Register' },
+        ]
+      }
+    },
   },
   methods: {
-    async logout() {
-      await logoutUser()
-      location.href = '/sign-in'
+    ...mapActions('auth', ['logout']),
+    async handleLogout() {
+      await this.logout()
+      location.href = '/'
     },
   },
 }
@@ -27,13 +35,16 @@ export default {
 
 <template>
   <header>
-    <RouterLink to="/" class="logo">To-Do List</RouterLink>
     <nav>
-      <ul>
-        <li v-for="link in links" :key="link.to">
+      <RouterLink to="/" class="logo">To-Do List</RouterLink>
+      <ul class="nav-menu">
+        <li v-for="link in navLinks" :key="link.to">
           <RouterLink :to="link.to">{{ link.text }}</RouterLink>
         </li>
-        <li @click="logout">Logout</li>
+
+        <li v-if="isAuthenticated">
+          <button @click="handleLogout" class="logout-btn">Logout</button>
+        </li>
       </ul>
     </nav>
   </header>
@@ -44,9 +55,6 @@ header {
   width: 100%;
   background-color: var(--color-primary);
   padding: var(--space-md) var(--space-xl);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .logo {
@@ -57,45 +65,54 @@ header {
   letter-spacing: 0.5px;
 }
 
-.content {
-  padding: var(--space-lg) var(--space-2xl);
-}
-
 nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--space-lg);
+  gap: var(--space-2xl);
   font-size: var(--font-size-base);
   text-align: center;
   text-transform: uppercase;
 }
 
-nav ul {
+.nav-menu {
   display: flex;
-  gap: var(--space-lg);
+  gap: var(--space-3xl);
   align-items: center;
+  margin-left: auto;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text-inverse);
-  font-weight: var(--fw-semibold);
-}
-
-nav a.router-link-active {
-  color: var(--color-secondary);
-  font-weight: var(--fw-semibold);
-}
-
+nav li,
 nav a {
-  display: inline-block;
-  padding: 0 var(--space-lg);
   color: var(--color-text-inverse);
   font-weight: var(--fw-medium);
+  cursor: pointer;
   transition: color 0.3s ease;
 }
 
-nav a:hover {
+.logout-btn {
+  background: none;
+  border: none;
+  font-size: inherit;
+  text-transform: uppercase;
+  padding: 0;
+  font-family: inherit;
+  text-decoration: none;
+  display: inline-block;
+  color: inherit;
+  font-weight: inherit;
+  cursor: inherit;
+  transition: inherit;
+}
+
+nav a:hover:not(.logo),
+nav li:hover,
+nav li:hover .logout-btn {
   color: var(--color-secondary);
+}
+
+nav a.router-link-active:not(.logo) {
+  color: var(--color-secondary);
+  font-weight: var(--fw-semibold);
 }
 </style>

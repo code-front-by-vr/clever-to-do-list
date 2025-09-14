@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { auth } from '@/api/firebase'
+import store from '@/store'
 import Home from '@/views/Home.vue'
 
 const router = createRouter({
@@ -30,13 +30,11 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const currentUser = auth.currentUser
+  const isAuthenticated = store.getters['auth/isAuthenticated']
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 
-  if (requiresAuth && !currentUser) {
+  if (requiresAuth && !isAuthenticated) {
     next('/sign-in')
-  } else if ((to.path === '/sign-in' || to.path === '/register') && currentUser) {
-    next('/tasks')
   } else {
     next()
   }

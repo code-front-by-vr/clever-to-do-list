@@ -1,9 +1,13 @@
 <script>
 import { RouterLink } from 'vue-router'
+import { mapGetters } from 'vuex'
 import Button from '@/components/common/Button.vue'
 
 export default {
   components: { Button, RouterLink },
+  computed: {
+    ...mapGetters('auth', ['isAuthenticated']),
+  },
   methods: {
     goToTasks() {
       this.$router.push('/tasks')
@@ -28,7 +32,7 @@ export default {
 
       <div class="buttons">
         <Button variant="main" @click="goToTasks">Get Started</Button>
-        <Button variant="light" @click="goToSignIn">Sign In</Button>
+        <Button variant="light" @click="goToSignIn" v-if="!isAuthenticated">Sign In</Button>
       </div>
     </div>
   </div>

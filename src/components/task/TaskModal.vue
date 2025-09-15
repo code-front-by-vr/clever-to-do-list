@@ -1,6 +1,7 @@
 <script>
 import Input from '@/components/common/Input.vue'
 import Button from '@/components/common/Button.vue'
+import { formatForInput, toDate } from '@/utils/date'
 
 export default {
   props: {
@@ -30,9 +31,9 @@ export default {
     },
     async handleSubmit() {
       const taskData = {
-        title: this.title,
-        description: this.description,
-        date: new Date(this.date),
+        title: this.title.trim(),
+        description: this.description.trim(),
+        date: toDate(this.date),
         done: this.done,
       }
       try {
@@ -51,13 +52,28 @@ export default {
 
   data() {
     return {
-      title: this.task?.title || '',
-      description: this.task?.description || '',
-      date: this.task?.date || '',
-      done: this.task?.done || false,
+      title: '',
+      description: '',
+      date: '',
+      done: false,
     }
   },
-
+  watch: {
+    isShowModal(newVal) {
+      if (newVal) {
+        if (this.task) {
+          this.title = this.task.title
+          this.description = this.task.description
+          this.date = formatForInput(this.task.date) || ''
+          this.done = this.task.done
+        } else {
+          this.resetForm()
+        }
+      } else {
+        this.resetForm()
+      }
+    },
+  },
   components: {
     Input,
     Button,

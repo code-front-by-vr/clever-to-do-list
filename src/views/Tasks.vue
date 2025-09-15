@@ -55,17 +55,14 @@ export default {
 
 <template>
   <div class="tasks-wrapper">
-    <!-- !TODO: TaskCalendar component -->
     <TaskCalendar />
 
     <h2 class="tasks-title">Tasks today: {{ tasks.length }}</h2>
 
-    <!-- !TODO: TasksList component -->
     <TaskList :tasks="tasks" @edit="handleEditTask" @delete="handleDeleteTask" />
-    <!-- !TODO AddTaskButton component -->
 
     <Button class="add-task-btn" @click="handleAddTask">Add Task</Button>
-    <TaskModal :isShowModal="isShowModal" :task="task" @close="handleCloseModal" />
+    <TaskModal :isShowModal="isShowModal" :task="task" @close="handleCloseModal" :isEdit="!!task" />
   </div>
 </template>
 

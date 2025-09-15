@@ -1,5 +1,5 @@
 import { addTask, getTasks, deleteTask, updateTask } from '@/api/task'
-import { Timestamp } from '@/api/task'
+import { toTimestamp } from '@/utils/date'
 
 export default {
   namespaced: true,
@@ -45,7 +45,7 @@ export default {
 
         const taskData = {
           ...task,
-          date: Timestamp.fromDate(task.date),
+          date: toTimestamp(task.date),
         }
 
         const taskId = await addTask(userId, taskData)
@@ -77,7 +77,7 @@ export default {
 
         const taskData = {
           ...task,
-          date: Timestamp.fromDate(task.date),
+          date: toTimestamp(task.date),
         }
 
         await updateTask(userId, taskData)

@@ -1,10 +1,11 @@
 import { addDoc, getDocs, deleteDoc, doc, Timestamp, updateDoc } from 'firebase/firestore/lite'
 import { getTasksCollection } from '@/api/task-collections'
+import { toTimestamp } from '@/utils/date'
 
 export async function addTask(userId, task) {
   const docRef = await addDoc(getTasksCollection(userId), {
     ...task,
-    date: task.date instanceof Date ? Timestamp.fromDate(task.date) : task.date,
+    date: task.date instanceof Date ? toTimestamp(task.date) : task.date,
   })
 
   return docRef.id
@@ -29,7 +30,7 @@ export async function updateTask(userId, task) {
   const taskDoc = doc(getTasksCollection(userId), id)
 
   if (fields.date instanceof Date) {
-    fields.date = Timestamp.fromDate(fields.date)
+    fields.date = toTimestamp(fields.date)
   }
 
   await updateDoc(taskDoc, fields)

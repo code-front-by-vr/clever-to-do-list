@@ -1,12 +1,15 @@
 import { registerUser, loginUser, logoutUser } from '@/api/auth'
+import { auth, onAuthStateChanged } from '@/api/firebase'
 
 export default {
   namespaced: true,
   state: () => ({
     user: null,
+    authInitialized: false,
   }),
   getters: {
     isAuthenticated: state => !!state.user,
+    isAuthReady: state => state.authInitialized,
   },
   mutations: {
     setUser(state, user) {
@@ -14,6 +17,9 @@ export default {
     },
     clearUser(state) {
       state.user = null
+    },
+    setAuthReady(state, ready) {
+      state.authInitialized = ready
     },
   },
   actions: {
@@ -45,6 +51,19 @@ export default {
         console.log('Auth/logout error: ', err.message)
         throw err
       }
+    },
+    initializeAuth({ commit }) {
+      return new Promise(resolve => {
+        onAuthStateChanged(auth, user => {
+          if (user) {
+            commit('setUser', user)
+          } else {
+            commit('clearUser')
+          }
+          commit('setAuthReady', true)
+          resolve()
+        })
+      })
     },
   },
 }

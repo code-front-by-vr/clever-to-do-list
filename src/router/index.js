@@ -29,7 +29,11 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+  if (!store.getters['auth/isAuthReady']) {
+    await store.dispatch('auth/initializeAuth')
+  }
+
   const isAuthenticated = store.getters['auth/isAuthenticated']
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 

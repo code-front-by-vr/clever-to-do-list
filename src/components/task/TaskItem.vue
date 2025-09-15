@@ -20,6 +20,9 @@ export default {
     handleDeleteTask() {
       this.$emit('delete', this.task)
     },
+    toggleTask() {
+      this.$emit('toggle', this.task)
+    },
   },
 }
 </script>
@@ -27,9 +30,9 @@ export default {
 <template>
   <div class="task-item">
     <div class="task-content">
-      <CircleCheck v-if="task.done" class="task-item-icon task-done" />
-      <Circle v-else class="task-item-icon" />
-      <h4>{{ task.title }}</h4>
+      <CircleCheck v-if="task.done" class="task-item-icon task-done" @click="toggleTask" />
+      <Circle v-else class="task-item-icon" @click="toggleTask" />
+      <h4 :class="{ 'text-done': task.done }">{{ task.title }}</h4>
     </div>
 
     <div class="task-actions">
@@ -71,6 +74,10 @@ export default {
 
 .task-done {
   color: var(--color-task-done);
+}
+
+.text-done {
+  text-decoration: line-through;
 }
 
 h4 {

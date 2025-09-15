@@ -18,6 +18,9 @@ export default {
     handleDeleteTask(task) {
       this.$emit('delete', task)
     },
+    handleToggleTask(task) {
+      this.$emit('toggle', task)
+    },
   },
 }
 </script>
@@ -29,6 +32,7 @@ export default {
       :task="task"
       @edit="handleEditTask"
       @delete="handleDeleteTask"
+      @toggle="handleToggleTask"
     />
   </div>
 </template>

@@ -35,6 +35,10 @@ export default {
       }
       this.$store.dispatch('tasks/deleteTask', task.id)
     },
+    handleToggleTask(task) {
+      const updatedTask = { ...task, done: !task.done }
+      this.$store.dispatch('tasks/updateTask', updatedTask)
+    },
   },
   data() {
     return {
@@ -57,10 +61,16 @@ export default {
   <div class="tasks-wrapper">
     <TaskCalendar />
 
-    <h2 class="tasks-title">Tasks today: {{ tasks.length }}</h2>
+    <div class="tasks-container">
+      <h2 class="tasks-title">Tasks today: {{ tasks.length }}</h2>
 
-    <TaskList :tasks="tasks" @edit="handleEditTask" @delete="handleDeleteTask" />
-
+      <TaskList
+        :tasks="tasks"
+        @edit="handleEditTask"
+        @delete="handleDeleteTask"
+        @toggle="handleToggleTask"
+      />
+    </div>
     <Button class="add-task-btn" @click="handleAddTask">Add Task</Button>
     <TaskModal :isShowModal="isShowModal" :task="task" @close="handleCloseModal" :isEdit="!!task" />
   </div>
@@ -68,9 +78,17 @@ export default {
 
 <style scoped>
 .tasks-wrapper {
+  height: 100%;
   padding: var(--space-3xl) var(--space-lg);
   display: flex;
   flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.tasks-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   gap: var(--space-xl);
 }
 

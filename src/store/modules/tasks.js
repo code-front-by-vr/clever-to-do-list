@@ -77,7 +77,7 @@ export default {
 
         const taskData = {
           ...task,
-          date: toTimestamp(task.date),
+          date: task.date instanceof Date ? toTimestamp(task.date) : task.date,
         }
 
         await updateTask(userId, taskData)

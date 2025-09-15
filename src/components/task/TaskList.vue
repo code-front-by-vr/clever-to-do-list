@@ -1,5 +1,6 @@
 <script>
 import TaskItem from '@/components/task/TaskItem.vue'
+
 export default {
   name: 'TaskList',
   props: {
@@ -10,11 +11,25 @@ export default {
   components: {
     TaskItem,
   },
+  methods: {
+    handleEditTask(task) {
+      this.$emit('edit', task)
+    },
+    handleDeleteTask(task) {
+      this.$emit('delete', task)
+    },
+  },
 }
 </script>
 <template>
   <div class="task-list">
-    <TaskItem v-for="task in tasks" :key="task.id" :task="task" />
+    <TaskItem
+      v-for="task in tasks"
+      :key="task.id"
+      :task="task"
+      @edit="handleEditTask"
+      @delete="handleDeleteTask"
+    />
   </div>
 </template>
 

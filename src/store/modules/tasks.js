@@ -1,4 +1,5 @@
 import { addTask, getTasks, deleteTask, updateTask } from '@/api/task'
+import { Timestamp } from '@/api/task'
 
 export default {
   namespaced: true,
@@ -42,8 +43,14 @@ export default {
         const userId = rootState.auth.user.uid
         if (!userId) throw new Error('User not authenticated')
 
-        const taskId = await addTask(userId, task)
-        commit('addTask', { id: taskId, ...task })
+        const taskData = {
+          ...task,
+          date: Timestamp.fromDate(task.date),
+        }
+
+        const taskId = await addTask(userId, taskData)
+        const newTask = { id: taskId, ...task }
+        commit('addTask', newTask)
       } catch (err) {
         console.error('Tasks/createTask error:', err)
         throw err
@@ -52,9 +59,11 @@ export default {
     async deleteTask({ commit, rootState }, id) {
       try {
         const userId = rootState.auth.user.uid
+
         if (!userId) throw new Error('User not authenticated')
 
         await deleteTask(userId, id)
+
         commit('deleteTask', id)
       } catch (err) {
         console.error('Tasks/deleteTask error:', err)
@@ -66,8 +75,13 @@ export default {
         const userId = rootState.auth.user.uid
         if (!userId) throw new Error('User not authenticated')
 
-        await updateTask(userId, task)
-        commit('updateTask', task)
+        const taskData = {
+          ...task,
+          date: Timestamp.fromDate(task.date),
+        }
+
+        await updateTask(userId, taskData)
+        commit('updateTask', taskData)
       } catch (err) {
         console.error('Tasks/updateTask error:', err)
         throw err

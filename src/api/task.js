@@ -20,7 +20,8 @@ export async function getTasks(userId) {
 }
 
 export async function deleteTask(userId, taskId) {
-  await deleteDoc(doc(getTasksCollection(userId), taskId))
+  const taskDoc = doc(getTasksCollection(userId), taskId)
+  await deleteDoc(taskDoc)
 }
 
 export async function updateTask(userId, task) {
@@ -33,3 +34,5 @@ export async function updateTask(userId, task) {
 
   await updateDoc(taskDoc, fields)
 }
+
+export { Timestamp }

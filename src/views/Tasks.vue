@@ -25,7 +25,6 @@ export default {
       this.isShowModal = true
     },
     handleEditTask(taskId) {
-      const task = this.$store.getters['tasks/taskById'](taskId)
       this.taskId = taskId
       this.isShowModal = true
     },

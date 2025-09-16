@@ -7,40 +7,46 @@ export default {
       type: Object,
     },
   },
+  methods: {
+    handleEditTask() {
+      this.$emit('edit', this.task.id)
+    },
+    handleDeleteTask() {
+      this.$emit('delete', this.task.id)
+    },
+    toggleTask() {
+      this.$emit('toggle', this.task.id)
+    },
+  },
   components: {
     Circle,
     CircleCheck,
     Edit,
     Trash2,
   },
-  methods: {
-    handleEditTask() {
-      this.$emit('edit', this.task)
-    },
-    handleDeleteTask() {
-      this.$emit('delete', this.task)
-    },
-    toggleTask() {
-      this.$emit('toggle', this.task)
-    },
-  },
 }
 </script>
 
 <template>
   <div class="task-item">
-    <div class="task-content">
-      <CircleCheck v-if="task.done" class="task-item-icon task-done" @click="toggleTask" />
-      <Circle v-else class="task-item-icon" @click="toggleTask" />
-      <h4 :class="{ 'text-done': task.done }">{{ task.title }}</h4>
+    <div class="task-item__content">
+      <CircleCheck
+        v-if="task.done"
+        class="task-item__icon task-item__icon--done"
+        @click="toggleTask"
+      />
+      <Circle v-else class="task-item__icon" @click="toggleTask" />
+      <h4 :class="['task-item__title', { 'task-item__title--done': task.done }]">
+        {{ task.title }}
+      </h4>
     </div>
 
-    <div class="task-actions">
-      <button @click="handleEditTask" class="action-button edit-button">
-        <Edit class="action-icon" />
+    <div class="task-item__actions">
+      <button @click="handleEditTask" class="task-item__button task-item__button--edit">
+        <Edit class="task-item__icon-action" />
       </button>
-      <button @click="handleDeleteTask" class="action-button delete-button">
-        <Trash2 class="action-icon" />
+      <button @click="handleDeleteTask" class="task-item__button task-item__button--delete">
+        <Trash2 class="task-item__icon-action" />
       </button>
     </div>
   </div>
@@ -57,13 +63,13 @@ export default {
   box-shadow: var(--shadow-primary);
 }
 
-.task-content {
+.task-item__content {
   display: flex;
   align-items: center;
   flex: 1;
 }
 
-.task-item-icon {
+.task-item__icon {
   width: var(--space-xl);
   height: var(--space-xl);
   stroke-width: 2.2;
@@ -72,28 +78,28 @@ export default {
   margin-right: var(--space-md);
 }
 
-.task-done {
+.task-item__icon--done {
   color: var(--color-task-done);
 }
 
-.text-done {
-  text-decoration: line-through;
-}
-
-h4 {
+.task-item__title {
   font-size: var(--font-size-md);
   font-weight: var(--fw-medium);
   color: var(--color-text-primary);
   margin: 0;
 }
 
-.task-actions {
+.task-item__title--done {
+  text-decoration: line-through;
+}
+
+.task-item__actions {
   display: flex;
   gap: var(--space-lg);
   margin-left: var(--space-md);
 }
 
-.action-button {
+.task-item__button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -105,7 +111,7 @@ h4 {
   cursor: pointer;
 }
 
-.action-icon {
+.task-item__icon-action {
   width: var(--space-lg);
   height: var(--space-lg);
   stroke-width: 2;
@@ -113,11 +119,11 @@ h4 {
   transition: color 0.2s ease;
 }
 
-.edit-button:hover .action-icon {
+.task-item__button--edit:hover .task-item__icon-action {
   color: var(--color-primary);
 }
 
-.delete-button:hover .action-icon {
+.task-item__button--delete:hover .task-item__icon-action {
   color: var(--color-accent-warning);
 }
 </style>

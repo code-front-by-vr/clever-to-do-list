@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import store from '@/store'
 import Home from '@/views/Home.vue'
+import { onAuthStateChanged, auth } from '@/api/firebase'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,16 +29,25 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach(async (to, from, next) => {
-  if (!store.getters['auth/isAuthReady']) {
-    await store.dispatch('auth/initializeAuth')
-  }
+const getCurrentUser = () => {
+  return new Promise(resolve => {
+    const removeListener = onAuthStateChanged(auth, user => {
+      removeListener()
+      resolve(user)
+    })
+  })
+}
 
-  const isAuthenticated = store.getters['auth/isAuthenticated']
+router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 
-  if (requiresAuth && !isAuthenticated) {
-    next('/sign-in')
+  if (requiresAuth) {
+    if (await getCurrentUser()) {
+      next()
+    } else {
+      alert('You must be logged in to access this page')
+      next('/sign-in')
+    }
   } else {
     next()
   }

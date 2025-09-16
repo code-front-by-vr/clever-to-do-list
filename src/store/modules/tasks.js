@@ -1,5 +1,4 @@
 import { addTask, getTasks, deleteTask, updateTask } from '@/api/task'
-import { toTimestamp } from '@/utils/date'
 
 export default {
   namespaced: true,
@@ -7,7 +6,6 @@ export default {
     tasks: [],
   }),
   getters: {
-    allTasks: state => state.tasks,
     taskById: state => id => state.tasks.find(task => task.id === id),
   },
   mutations: {
@@ -28,7 +26,7 @@ export default {
   actions: {
     async fetchTasks({ commit, rootState }) {
       try {
-        const userId = rootState.auth.user.uid
+        const userId = rootState.auth.user?.uid
         if (!userId) throw new Error('User not authenticated')
 
         const tasks = await getTasks(userId)
@@ -40,17 +38,11 @@ export default {
     },
     async createTask({ commit, rootState }, task) {
       try {
-        const userId = rootState.auth.user.uid
+        const userId = rootState.auth.user?.uid
         if (!userId) throw new Error('User not authenticated')
 
-        const taskData = {
-          ...task,
-          date: toTimestamp(task.date),
-        }
-
-        const taskId = await addTask(userId, taskData)
-        const newTask = { id: taskId, ...task }
-        commit('addTask', newTask)
+        const taskData = await addTask(userId, task)
+        commit('addTask', taskData)
       } catch (err) {
         console.error('Tasks/createTask error:', err)
         throw err
@@ -58,7 +50,7 @@ export default {
     },
     async deleteTask({ commit, rootState }, id) {
       try {
-        const userId = rootState.auth.user.uid
+        const userId = rootState.auth.user?.uid
 
         if (!userId) throw new Error('User not authenticated')
 
@@ -72,16 +64,11 @@ export default {
     },
     async updateTask({ commit, rootState }, task) {
       try {
-        const userId = rootState.auth.user.uid
+        const userId = rootState.auth.user?.uid
         if (!userId) throw new Error('User not authenticated')
 
-        const taskData = {
-          ...task,
-          date: task.date instanceof Date ? toTimestamp(task.date) : task.date,
-        }
-
-        await updateTask(userId, taskData)
-        commit('updateTask', taskData)
+        await updateTask(userId, task)
+        commit('updateTask', task)
       } catch (err) {
         console.error('Tasks/updateTask error:', err)
         throw err

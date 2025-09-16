@@ -1,21 +1,23 @@
-import { addDoc, getDocs, deleteDoc, doc, Timestamp, updateDoc } from 'firebase/firestore/lite'
-import { getTasksCollection } from '@/api/task-collections'
-import { toTimestamp } from '@/utils/date'
+import { addDoc, getDocs, deleteDoc, doc, updateDoc, collection } from 'firebase/firestore/lite'
+import { db } from '@/api/firebase'
+import { toFirestoreTask, fromFirestoreTask } from '@/utils/lib/adapters'
+
+export function getTasksCollection(userId) {
+  return collection(db, `users/${userId}/tasks`)
+}
 
 export async function addTask(userId, task) {
-  const docRef = await addDoc(getTasksCollection(userId), {
-    ...task,
-    date: task.date instanceof Date ? toTimestamp(task.date) : task.date,
-  })
+  const firestoreTask = toFirestoreTask(task)
+  const docRef = await addDoc(getTasksCollection(userId), firestoreTask)
 
-  return docRef.id
+  return { id: docRef.id, ...task }
 }
 
 export async function getTasks(userId) {
   const snapshot = await getDocs(getTasksCollection(userId))
   const tasks = []
 
-  snapshot.forEach(doc => tasks.push({ id: doc.id, ...doc.data() }))
+  snapshot.forEach(doc => tasks.push(fromFirestoreTask(doc)))
 
   return tasks
 }
@@ -26,14 +28,8 @@ export async function deleteTask(userId, taskId) {
 }
 
 export async function updateTask(userId, task) {
-  const { id, ...fields } = task
+  const { id, ...fields } = toFirestoreTask(task)
   const taskDoc = doc(getTasksCollection(userId), id)
-
-  if (fields.date instanceof Date) {
-    fields.date = toTimestamp(fields.date)
-  }
 
   await updateDoc(taskDoc, fields)
 }
-
-export { Timestamp }

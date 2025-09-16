@@ -1,33 +1,35 @@
 <script>
 import Input from '@/components/common/Input.vue'
 import Button from '@/components/common/Button.vue'
-import { formatForInput, toDate } from '@/utils/date'
+import { formatDateToDisplayValue, toDate } from '@/utils/date'
 
 export default {
   props: {
-    isShowModal: {
-      type: Boolean,
-      required: true,
-    },
-    isEdit: {
+    isEditing: {
       type: Boolean,
       default: false,
     },
-    task: {
-      type: Object,
+    taskId: {
+      type: String,
+      default: null,
     },
   },
   emits: ['close'],
-  methods: {
-    handleClose() {
-      this.resetForm()
-      this.$emit('close')
+  computed: {
+    task() {
+      return this.$store.getters['tasks/taskById'](this.taskId)
     },
+  },
+  methods: {
     resetForm() {
       this.title = ''
       this.description = ''
       this.date = ''
       this.done = false
+    },
+    handleClose() {
+      this.resetForm()
+      this.$emit('close')
     },
     async handleSubmit() {
       const taskData = {
@@ -37,7 +39,7 @@ export default {
         done: this.done,
       }
       try {
-        if (this.isEdit) {
+        if (this.isEditing) {
           taskData.id = this.task.id
           await this.$store.dispatch('tasks/updateTask', taskData)
         } else {
@@ -58,21 +60,13 @@ export default {
       done: false,
     }
   },
-  watch: {
-    isShowModal(newVal) {
-      if (newVal) {
-        if (this.task) {
-          this.title = this.task.title
-          this.description = this.task.description
-          this.date = formatForInput(this.task.date) || ''
-          this.done = this.task.done
-        } else {
-          this.resetForm()
-        }
-      } else {
-        this.resetForm()
-      }
-    },
+  mounted() {
+    if (this.task) {
+      this.title = this.task.title
+      this.description = this.task.description
+      this.date = formatDateToDisplayValue(this.task.date) || ''
+      this.done = this.task.done
+    }
   },
   components: {
     Input,
@@ -82,11 +76,11 @@ export default {
 </script>
 
 <template>
-  <div v-if="isShowModal" class="modal-backdrop" @click.self="handleClose">
+  <div class="modal-backdrop" @click.self="handleClose">
     <div class="modal">
-      <div class="modal__title">{{ isEdit ? 'Edit Task' : 'Add Task' }}</div>
+      <div class="modal__title">{{ isEditing ? 'Edit Task' : 'Add Task' }}</div>
       <div class="modal__content">
-        <form @submit.prevent="handleSubmit">
+        <form class="modal__form" @submit.prevent="handleSubmit">
           <Input v-model="title" type="text" label="Title" placeholder="Enter task title" />
           <Input
             v-model="description"
@@ -96,13 +90,13 @@ export default {
           />
           <Input v-model="date" type="date" label="Date" placeholder="Enter task date" />
           <div class="modal__actions">
-            <Button type="submit" variant="main" class="modal__action modal__action-submit">
-              {{ isEdit ? 'Update' : 'Save' }}
+            <Button type="submit" variant="main" class="modal__action modal__action--submit">
+              {{ isEditing ? 'Update' : 'Save' }}
             </Button>
             <Button
               type="button"
               variant="light"
-              class="modal__action modal__action-cancel"
+              class="modal__action modal__action--cancel"
               @click="handleClose"
             >
               Cancel
@@ -154,7 +148,7 @@ export default {
   gap: var(--space-xl);
 }
 
-.modal__content form {
+.modal__form {
   display: flex;
   flex-direction: column;
   width: 100%;

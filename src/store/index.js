@@ -1,7 +1,6 @@
 import { createStore } from 'vuex'
 
-import auth from '@/store/modules/auth'
-import tasks from '@/store/modules/tasks'
+import { auth, tasks } from './modules'
 
 const store = createStore({
   modules: {

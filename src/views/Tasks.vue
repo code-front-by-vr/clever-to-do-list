@@ -1,52 +1,47 @@
 <script>
-import TaskList from '@/components/task/TaskList.vue'
 import TaskCalendar from '@/components/calendar/TaskCalendar.vue'
 import Button from '@/components/common/Button.vue'
 import TaskModal from '@/components/task/TaskModal.vue'
+import TaskItem from '@/components/task/TaskItem.vue'
+import { mapState } from 'vuex'
 
 export default {
-  components: {
-    TaskList,
-    TaskCalendar,
-    Button,
-    TaskModal,
+  data() {
+    return {
+      isShowModal: false,
+      taskId: null,
+    }
   },
   computed: {
-    tasks() {
-      return this.$store.getters['tasks/allTasks']
-    },
+    // TODO: mutations - updateTaskById
+    ...mapState('tasks', ['tasks']),
   },
   methods: {
     handleCloseModal() {
       this.isShowModal = false
     },
     handleAddTask() {
-      this.task = null
+      this.taskId = null
       this.isShowModal = true
     },
-    handleEditTask(task) {
-      this.task = task
+    handleEditTask(taskId) {
+      const task = this.$store.getters['tasks/taskById'](taskId)
+      this.taskId = taskId
       this.isShowModal = true
     },
-    handleDeleteTask(task) {
-      if (!task.id) {
-        console.error('Task ID is missing:', task)
+    handleDeleteTask(taskId) {
+      if (!taskId) {
+        console.error('Task ID is missing:', taskId)
         return
       }
-      this.$store.dispatch('tasks/deleteTask', task.id)
+      this.$store.dispatch('tasks/deleteTask', taskId)
     },
-    handleToggleTask(task) {
+    handleToggleTask(taskId) {
+      const task = this.$store.getters['tasks/taskById'](taskId)
       const updatedTask = { ...task, done: !task.done }
       this.$store.dispatch('tasks/updateTask', updatedTask)
     },
   },
-  data() {
-    return {
-      isShowModal: false,
-      task: null,
-    }
-  },
-
   async mounted() {
     try {
       await this.$store.dispatch('tasks/fetchTasks')
@@ -54,30 +49,45 @@ export default {
       console.error('Tasks mounted error:', err)
     }
   },
+  components: {
+    TaskCalendar,
+    Button,
+    TaskModal,
+    TaskItem,
+  },
 }
 </script>
 
 <template>
-  <div class="tasks-wrapper">
-    <TaskCalendar />
+  <div class="tasks">
+    <TaskCalendar class="tasks__calendar" />
 
-    <div class="tasks-container">
-      <h2 class="tasks-title">Tasks today: {{ tasks.length }}</h2>
+    <div class="tasks__container">
+      <h2 class="tasks__title">Tasks today: {{ tasks.length }}</h2>
 
-      <TaskList
-        :tasks="tasks"
-        @edit="handleEditTask"
-        @delete="handleDeleteTask"
-        @toggle="handleToggleTask"
-      />
+      <div class="task__list">
+        <TaskItem
+          v-for="task in tasks"
+          :key="task.id"
+          :task="task"
+          @edit="handleEditTask"
+          @delete="handleDeleteTask"
+          @toggle="handleToggleTask"
+        />
+      </div>
     </div>
-    <Button class="add-task-btn" @click="handleAddTask">Add Task</Button>
-    <TaskModal :isShowModal="isShowModal" :task="task" @close="handleCloseModal" :isEdit="!!task" />
+    <Button class="tasks__button" @click="handleAddTask">Add Task</Button>
+    <TaskModal
+      v-if="isShowModal"
+      :taskId="taskId"
+      @close="handleCloseModal"
+      :isEditing="!!taskId"
+    />
   </div>
 </template>
 
 <style scoped>
-.tasks-wrapper {
+.tasks {
   height: 100%;
   padding: var(--space-3xl) var(--space-lg);
   display: flex;
@@ -85,21 +95,29 @@ export default {
   gap: var(--space-xl);
 }
 
-.tasks-container {
+.tasks__container {
   display: flex;
   flex-direction: column;
   flex: 1;
   gap: var(--space-xl);
 }
 
-.tasks-title {
+.tasks__title {
   font-size: var(--font-size-2xl);
   font-weight: var(--fw-medium);
   color: var(--color-text-primary);
   margin-top: var(--space-xl);
 }
 
-.add-task-btn {
+.task__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  width: var(--container-normal);
+  margin: 0 auto;
+}
+
+.tasks__button {
   width: 50%;
   margin: 0 auto;
   padding: var(--space-md) var(--space-lg);

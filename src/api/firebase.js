@@ -6,7 +6,7 @@ import {
   signOut,
   onAuthStateChanged,
 } from 'firebase/auth'
-import { collection, getFirestore } from 'firebase/firestore/lite'
+import { collection, getFirestore, Timestamp } from 'firebase/firestore/lite'
 import { firebaseConfig } from '@/config/firebase'
 
 const app = initializeApp(firebaseConfig)
@@ -20,4 +20,5 @@ export {
   signOut,
   onAuthStateChanged,
   collection,
+  Timestamp,
 }

@@ -1,4 +1,4 @@
-import { Timestamp } from '@/api/task'
+import { Timestamp } from '@/api/firebase'
 
 export function toDate(value) {
   if (!value) return null
@@ -13,7 +13,7 @@ export function toTimestamp(date) {
   return Timestamp.fromDate(date)
 }
 
-export function formatForInput(date) {
+export function formatDateToDisplayValue(date) {
   const d = toDate(date)
   if (!d) return ''
   const yyyy = d.getFullYear()

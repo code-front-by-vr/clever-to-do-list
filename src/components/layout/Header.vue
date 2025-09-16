@@ -26,24 +26,28 @@ export default {
   methods: {
     ...mapActions('auth', ['logout']),
     async handleLogout() {
-      await this.logout()
-      location.href = '/'
+      try {
+        await this.logout()
+        location.href = '/sign-in'
+      } catch (err) {
+        console.error('Header/handleLogout error:', err)
+      }
     },
   },
 }
 </script>
 
 <template>
-  <header>
-    <nav>
-      <RouterLink to="/" class="logo">To-Do List</RouterLink>
-      <ul class="nav-menu">
-        <li v-for="link in navLinks" :key="link.to">
-          <RouterLink :to="link.to">{{ link.text }}</RouterLink>
+  <header class="header">
+    <nav class="header-nav">
+      <RouterLink to="/" class="header-nav__logo">To-Do List</RouterLink>
+      <ul class="header-nav__menu">
+        <li v-for="link in navLinks" :key="link.to" class="header-nav__item">
+          <RouterLink :to="link.to" class="header-nav__link">{{ link.text }}</RouterLink>
         </li>
 
-        <li v-if="isAuthenticated">
-          <button @click="handleLogout" class="logout-btn">Logout</button>
+        <li v-if="isAuthenticated" class="header-nav__item">
+          <button @click="handleLogout" class="header-nav__logout">Logout</button>
         </li>
       </ul>
     </nav>
@@ -51,21 +55,13 @@ export default {
 </template>
 
 <style scoped>
-header {
+.header {
   width: 100%;
   background-color: var(--color-primary);
   padding: var(--space-md) var(--space-xl);
 }
 
-.logo {
-  font-size: var(--font-size-xl);
-  font-weight: var(--fw-semibold);
-  color: var(--color-text-inverse);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-nav {
+.header-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -75,22 +71,30 @@ nav {
   text-transform: uppercase;
 }
 
-.nav-menu {
+.header-nav__logo {
+  font-size: var(--font-size-xl);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-inverse);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.header-nav__menu {
   display: flex;
   gap: var(--space-3xl);
   align-items: center;
   margin-left: auto;
 }
 
-nav li,
-nav a {
+.header-nav__item,
+.header-nav__link {
   color: var(--color-text-inverse);
   font-weight: var(--fw-medium);
   cursor: pointer;
   transition: color 0.3s ease;
 }
 
-.logout-btn {
+.header-nav__logout {
   background: none;
   border: none;
   font-size: inherit;
@@ -105,13 +109,13 @@ nav a {
   transition: inherit;
 }
 
-nav a:hover:not(.logo),
-nav li:hover,
-nav li:hover .logout-btn {
+.header-nav__link:hover:not(.header-nav__logo),
+.header-nav__item:hover,
+.header-nav__item:hover .header-nav__logout {
   color: var(--color-secondary);
 }
 
-nav a.router-link-active:not(.logo) {
+.header-nav__link.router-link-active:not(.header-nav__logo) {
   color: var(--color-secondary);
   font-weight: var(--fw-semibold);
 }

@@ -13,6 +13,7 @@ export function getRequiredEnvs(names) {
   }
 
   if (missing.length > 0) {
+    alert(`❌ Missing environment variables:\n${missing.map(v => `- ${v}`).join('\n')}`)
     throw new Error(`❌ Missing environment variables:\n${missing.map(v => `- ${v}`).join('\n')}`)
   }
 

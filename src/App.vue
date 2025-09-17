@@ -11,9 +11,9 @@ export default {
 
 <template>
   <Header />
-  <div class="container">
+  <main class="container">
     <RouterView />
-  </div>
+  </main>
 </template>
 
 <style scoped>

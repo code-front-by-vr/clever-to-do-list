@@ -35,7 +35,7 @@ export default {
         this.password = ''
         this.confirmPassword = ''
 
-        this.$router.push('/tasks')
+        this.$router.push('/')
       } catch (error) {
         this.errorMessage = error.message
       }
@@ -48,7 +48,7 @@ export default {
   <div class="register-wrapper">
     <div class="register">
       <h2 class="title">Register</h2>
-      <form @submit.prevent="handleClickRegister" class="form">
+      <form @submit.prevent="handleClickRegister()" class="form">
         <Input v-model="email" type="email" label="Email" placeholder="Enter your email" required />
         <Input
           v-model="password"

@@ -27,8 +27,13 @@ export default {
       </p>
 
       <div class="buttons">
-        <Button variant="main" @click="goToTasks">Get Started</Button>
-        <Button variant="light" @click="goToSignIn">Sign In</Button>
+        <Button @click="goToTasks()">Get Started</Button>
+        <Button
+          variant="outlined"
+          @click="goToSignIn()"
+          v-if="!this.$store.getters['auth/isAuthenticated']"
+          >Sign In</Button
+        >
       </div>
     </div>
   </div>
@@ -57,6 +62,7 @@ export default {
 }
 
 .title {
+  font-family: var(--font-family-inter);
   font-size: var(--font-size-5xl);
   font-weight: var(--fw-bold);
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);

@@ -4,13 +4,23 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  onAuthStateChanged,
 } from 'firebase/auth'
-import { collection, getFirestore } from 'firebase/firestore/lite'
+import { collection, getFirestore, Timestamp } from 'firebase/firestore/lite'
 import { firebaseConfig } from '@/config/firebase'
 
 const app = initializeApp(firebaseConfig)
 
-export const auth = getAuth(app)
-export const db = getFirestore(app)
+const auth = getAuth(app)
+const db = getFirestore(app)
 
-export { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, collection }
+export {
+  auth,
+  db,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  collection,
+  Timestamp,
+}

@@ -1,0 +1,78 @@
+import { addTask, getTasks, deleteTask, updateTask } from '@/api/task'
+
+export default {
+  namespaced: true,
+  state: () => ({
+    tasks: [],
+  }),
+  getters: {
+    taskById: state => id => state.tasks.find(task => task.id === id),
+  },
+  mutations: {
+    setTasks(state, tasks) {
+      state.tasks = tasks
+    },
+    addTask(state, task) {
+      state.tasks.push(task)
+    },
+    deleteTask(state, id) {
+      state.tasks = state.tasks.filter(task => task.id !== id)
+    },
+    updateTask(state, updatedTask) {
+      const task = state.tasks.find(t => t.id === updatedTask.id)
+      if (task) Object.assign(task, updatedTask)
+    },
+  },
+  actions: {
+    async fetchTasks({ commit, rootState }) {
+      try {
+        const userId = rootState.auth.user?.uid
+        if (!userId) throw new Error('User not authenticated')
+
+        const tasks = await getTasks(userId)
+        commit('setTasks', tasks)
+      } catch (err) {
+        console.log('Tasks/fetchTasks error: ', err.message)
+        throw err
+      }
+    },
+    async createTask({ commit, rootState }, task) {
+      try {
+        const userId = rootState.auth.user?.uid
+        if (!userId) throw new Error('User not authenticated')
+
+        const taskData = await addTask(userId, task)
+        commit('addTask', taskData)
+      } catch (err) {
+        console.error('Tasks/createTask error:', err)
+        throw err
+      }
+    },
+    async deleteTask({ commit, rootState }, id) {
+      try {
+        const userId = rootState.auth.user?.uid
+
+        if (!userId) throw new Error('User not authenticated')
+
+        await deleteTask(userId, id)
+
+        commit('deleteTask', id)
+      } catch (err) {
+        console.error('Tasks/deleteTask error:', err)
+        throw err
+      }
+    },
+    async updateTask({ commit, rootState }, task) {
+      try {
+        const userId = rootState.auth.user?.uid
+        if (!userId) throw new Error('User not authenticated')
+
+        const updatedTask = await updateTask(userId, task)
+        commit('updateTask', updatedTask)
+      } catch (err) {
+        console.error('Tasks/updateTask error:', err)
+        throw err
+      }
+    },
+  },
+}

@@ -8,14 +8,14 @@ export default {
     },
     variant: {
       type: String,
-      default: 'main', // main | light
+      default: 'primary', // primary | outlined | ghost
     },
   },
 }
 </script>
 
 <template>
-  <button :class="['button', `button-${variant}`]" :type>
+  <button :class="['button', `button--${variant}`]" :type>
     <slot></slot>
   </button>
 </template>
@@ -31,24 +31,45 @@ export default {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  border: 2px solid transparent;
 }
-.button.button-main {
+.button--primary {
   background: var(--color-primary);
   color: var(--color-text-inverse);
+  border-color: var(--color-primary);
   box-shadow: 0 4px 12px var(--shadow-primary);
 }
-.button.button-main:hover {
-  transform: scale(1.03);
+.button--primary:hover,
+.button--primary:focus,
+.button--primary:active {
   box-shadow: 0 8px 20px var(--shadow-primary-hover);
+  transform: scale(1.03);
 }
 
-.button.button-light {
-  background: transparent;
+.button--outlined {
+  background-color: transparent;
   color: var(--color-primary);
-  border: 2px solid var(--color-primary);
+  border-color: var(--color-primary);
 }
-.button.button-light:hover {
-  background: rgba(108, 99, 255, 0.1);
+.button--outlined:hover,
+.button--outlined:focus,
+.button--outlined:active {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  box-shadow: 0 8px 20px var(--shadow-primary-hover);
+  transform: scale(1.03);
+}
+
+.button--ghost {
+  background-color: transparent;
+  color: var(--color-primary);
+  border-color: transparent;
+}
+.button--ghost:hover,
+.button--ghost:focus,
+.button--ghost:active {
+  background-color: rgba(108, 99, 255, 0.08);
+  color: var(--color-primary);
   transform: scale(1.03);
 }
 </style>

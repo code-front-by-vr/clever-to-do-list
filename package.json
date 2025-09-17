@@ -20,7 +20,8 @@
     "firebase": "^12.2.1",
     "lucide-vue-next": "^0.544.0",
     "vue": "^3.5.18",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
@@ -34,5 +35,14 @@
     "prettier": "^3.6.2",
     "vite": "^7.0.6",
     "vite-plugin-vue-devtools": "^8.0.0"
+  },
+  "lint-staged": {
+    "*.{js,vue}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{css,md,json,html}": [
+      "prettier --write"
+    ]
   }
 }

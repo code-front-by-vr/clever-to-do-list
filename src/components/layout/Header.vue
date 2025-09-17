@@ -1,55 +1,74 @@
 <script>
 import { RouterLink } from 'vue-router'
-import { logoutUser } from '@/api/auth'
 
 export default {
   components: {
     RouterLink,
   },
-  data() {
-    return {
-      links: [
-        { to: '/', text: 'Home' },
-        { to: '/sign-in', text: 'Sign In' },
-        { to: '/register', text: 'Register' },
-        { to: '/tasks', text: 'Tasks' },
-      ],
-    }
+  computed: {
+    navLinks() {
+      if (this.$store.getters['auth/isAuthenticated']) {
+        return [
+          { to: '/', text: 'Home' },
+          { to: '/tasks', text: 'Tasks' },
+        ]
+      } else {
+        return [
+          { to: '/', text: 'Home' },
+          { to: '/sign-in', text: 'Sign In' },
+          { to: '/register', text: 'Register' },
+        ]
+      }
+    },
   },
   methods: {
-    async logout() {
-      await logoutUser()
-      location.href = '/sign-in'
+    async handleLogout() {
+      try {
+        await this.$store.dispatch('auth/logout')
+        location.href = '/sign-in'
+      } catch (err) {
+        console.error('Header/handleLogout error:', err)
+      }
     },
   },
 }
 </script>
 
 <template>
-  <header>
-    <RouterLink to="/" class="logo">To-Do List</RouterLink>
-    <nav>
-      <ul>
-        <li v-for="link in links" :key="link.to">
-          <RouterLink :to="link.to">{{ link.text }}</RouterLink>
+  <header class="header">
+    <nav class="header-nav">
+      <RouterLink to="/" class="header-nav__logo">To-Do List</RouterLink>
+      <ul class="header-nav__menu">
+        <li v-for="link in navLinks" :key="link.to" class="header-nav__item">
+          <RouterLink :to="link.to" class="header-nav__link">{{ link.text }}</RouterLink>
         </li>
-        <li @click="logout">Logout</li>
+
+        <li v-if="this.$store.getters['auth/isAuthenticated']" class="header-nav__item">
+          <button @click="handleLogout" class="header-nav__logout">Logout</button>
+        </li>
       </ul>
     </nav>
   </header>
 </template>
 
 <style scoped>
-header {
+.header {
   width: 100%;
   background-color: var(--color-primary);
   padding: var(--space-md) var(--space-xl);
+}
+
+.header-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--space-2xl);
+  font-size: var(--font-size-base);
+  text-align: center;
+  text-transform: uppercase;
 }
 
-.logo {
+.header-nav__logo {
   font-size: var(--font-size-xl);
   font-weight: var(--fw-semibold);
   color: var(--color-text-inverse);
@@ -57,45 +76,44 @@ header {
   letter-spacing: 0.5px;
 }
 
-.content {
-  padding: var(--space-lg) var(--space-2xl);
-}
-
-nav {
+.header-nav__menu {
   display: flex;
-  justify-content: space-between;
+  gap: var(--space-3xl);
   align-items: center;
-  gap: var(--space-lg);
-  font-size: var(--font-size-base);
-  text-align: center;
-  text-transform: uppercase;
+  margin-left: auto;
 }
 
-nav ul {
-  display: flex;
-  gap: var(--space-lg);
-  align-items: center;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text-inverse);
-  font-weight: var(--fw-semibold);
-}
-
-nav a.router-link-active {
-  color: var(--color-secondary);
-  font-weight: var(--fw-semibold);
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 var(--space-lg);
+.header-nav__item,
+.header-nav__link {
   color: var(--color-text-inverse);
   font-weight: var(--fw-medium);
+  cursor: pointer;
   transition: color 0.3s ease;
 }
 
-nav a:hover {
+.header-nav__logout {
+  background: none;
+  border: none;
+  font-size: inherit;
+  text-transform: uppercase;
+  padding: 0;
+  font-family: inherit;
+  text-decoration: none;
+  display: inline-block;
+  color: inherit;
+  font-weight: inherit;
+  cursor: inherit;
+  transition: inherit;
+}
+
+.header-nav__link:hover:not(.header-nav__logo),
+.header-nav__item:hover,
+.header-nav__item:hover .header-nav__logout {
   color: var(--color-secondary);
+}
+
+.header-nav__link.router-link-active:not(.header-nav__logo) {
+  border-bottom: 2px solid var(--color-secondary);
+  font-weight: var(--fw-semibold);
 }
 </style>

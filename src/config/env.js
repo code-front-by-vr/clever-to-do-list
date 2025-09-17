@@ -1,9 +1,21 @@
-export function getEnv(name) {
-  const value = import.meta.env[name]
+export function getRequiredEnvs(names) {
+  const missing = []
+  const values = {}
 
-  if (!value) {
-    throw new Error(`❌ Environment variable "${name}" is missing`)
+  for (const name of names) {
+    const value = import.meta.env[name]
+
+    if (!value) {
+      missing.push(name)
+    } else {
+      values[name] = value
+    }
   }
 
-  return value
+  if (missing.length > 0) {
+    alert(`❌ Missing environment variables:\n${missing.map(v => `- ${v}`).join('\n')}`)
+    throw new Error(`❌ Missing environment variables:\n${missing.map(v => `- ${v}`).join('\n')}`)
+  }
+
+  return values
 }

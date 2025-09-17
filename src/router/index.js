@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { auth } from '@/api/firebase'
 import Home from '@/views/Home.vue'
+import { getCurrentUser } from '@/api/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,14 +29,16 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
-  const currentUser = auth.currentUser
+router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 
-  if (requiresAuth && !currentUser) {
-    next('/sign-in')
-  } else if ((to.path === '/sign-in' || to.path === '/register') && currentUser) {
-    next('/tasks')
+  if (requiresAuth) {
+    if (await getCurrentUser()) {
+      next()
+    } else {
+      alert('You must be logged in to access this page')
+      next('/sign-in')
+    }
   } else {
     next()
   }

@@ -35,5 +35,14 @@
     "prettier": "^3.6.2",
     "vite": "^7.0.6",
     "vite-plugin-vue-devtools": "^8.0.0"
+  },
+  "lint-staged": {
+    "*.{js,vue}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{css,md,json,html}": [
+      "prettier --write"
+    ]
   }
 }

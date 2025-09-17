@@ -1,4 +1,4 @@
-import { toTimestamp, toDate } from '@/utils/date'
+import { toTimestamp, toDate } from '@/lib/utils/date'
 
 export function toFirestoreTask(task) {
   return {

@@ -17,5 +17,4 @@ onAuthStateChanged(auth, user => {
     store.commit('auth/clearUser')
   }
 })
-
 app.mount('#app')

@@ -18,9 +18,9 @@ export default {
     deleteTask(state, id) {
       state.tasks = state.tasks.filter(task => task.id !== id)
     },
-    updateTask(state, task) {
-      const index = state.tasks.findIndex(t => t.id === task.id)
-      if (index !== -1) state.tasks[index] = task
+    updateTask(state, updatedTask) {
+      const task = state.tasks.find(t => t.id === updatedTask.id)
+      if (task) Object.assign(task, updatedTask)
     },
   },
   actions: {
@@ -67,8 +67,8 @@ export default {
         const userId = rootState.auth.user?.uid
         if (!userId) throw new Error('User not authenticated')
 
-        await updateTask(userId, task)
-        commit('updateTask', task)
+        const updatedTask = await updateTask(userId, task)
+        commit('updateTask', updatedTask)
       } catch (err) {
         console.error('Tasks/updateTask error:', err)
         throw err

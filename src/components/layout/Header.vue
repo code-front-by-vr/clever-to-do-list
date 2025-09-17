@@ -1,15 +1,13 @@
 <script>
 import { RouterLink } from 'vue-router'
-import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
     RouterLink,
   },
   computed: {
-    ...mapGetters('auth', ['isAuthenticated']),
     navLinks() {
-      if (this.isAuthenticated) {
+      if (this.$store.getters['auth/isAuthenticated']) {
         return [
           { to: '/', text: 'Home' },
           { to: '/tasks', text: 'Tasks' },
@@ -24,10 +22,9 @@ export default {
     },
   },
   methods: {
-    ...mapActions('auth', ['logout']),
     async handleLogout() {
       try {
-        await this.logout()
+        await this.$store.dispatch('auth/logout')
         location.href = '/sign-in'
       } catch (err) {
         console.error('Header/handleLogout error:', err)
@@ -46,7 +43,7 @@ export default {
           <RouterLink :to="link.to" class="header-nav__link">{{ link.text }}</RouterLink>
         </li>
 
-        <li v-if="isAuthenticated" class="header-nav__item">
+        <li v-if="this.$store.getters['auth/isAuthenticated']" class="header-nav__item">
           <button @click="handleLogout" class="header-nav__logout">Logout</button>
         </li>
       </ul>
@@ -116,7 +113,7 @@ export default {
 }
 
 .header-nav__link.router-link-active:not(.header-nav__logo) {
-  color: var(--color-secondary);
+  border-bottom: 2px solid var(--color-secondary);
   font-weight: var(--fw-semibold);
 }
 </style>

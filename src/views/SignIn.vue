@@ -34,7 +34,7 @@ export default {
   <div class="sign-in-wrapper">
     <div class="sign-in">
       <h2 class="title">Sign In</h2>
-      <form @submit.prevent="handleClickSignIn" class="form">
+      <form @submit.prevent="handleClickSignIn()" class="form">
         <Input v-model="email" type="email" label="Email" placeholder="Enter your email" required />
         <Input
           v-model="password"

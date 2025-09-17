@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;600;700&display=swap');
+
 :root {
   /* Brand colors */
   --color-primary: #6c63ff; /*  main accent */
@@ -36,6 +38,8 @@
   --container-full: 100%;
 
   /* Typography */
+  --font-interface: 'Inter', sans-serif;
+  --font-content: 'Roboto', sans-serif;
   --font-size-sm: 14px;
   --font-size-base: 16px;
   --font-size-md: 18px;
@@ -68,17 +72,10 @@
   --space-2xl: 1.5rem;
   --space-3xl: 2rem;
   --space-4xl: 2.5rem;
-  --space-5xl: 3rem;
   --space-6xl: 5rem;
-  --space-7xl: 6rem;
-  --space-8xl: 8rem;
-  --space-9xl: 10rem;
-  --space-10xl: 12.5rem;
 }
 
-*,
-*::before,
-*::after {
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -95,8 +92,18 @@ body {
   font-display: swap;
   background-color: var(--color-bg);
   color: var(--color-text-primary);
-  font-family: Roboto, Inter, system-ui, sans-serif;
+  font-family: var(--font-content), var(--font-interface), system-ui, sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+select,
+textarea,
+.form-control,
+.nav,
+.header {
+  font-family: var(--font-interface);
 }

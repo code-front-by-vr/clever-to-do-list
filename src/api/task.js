@@ -1,8 +1,16 @@
-import { addDoc, getDocs, deleteDoc, doc, updateDoc, collection } from 'firebase/firestore/lite'
+import {
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc,
+  collection,
+  getDoc,
+} from 'firebase/firestore/lite'
 import { db } from '@/api/firebase'
-import { toFirestoreTask, fromFirestoreTask } from '@/utils/lib/adapters'
+import { toFirestoreTask, fromFirestoreTask } from '@/lib/adapters'
 
-export function getTasksCollection(userId) {
+function getTasksCollection(userId) {
   return collection(db, `users/${userId}/tasks`)
 }
 
@@ -15,11 +23,8 @@ export async function addTask(userId, task) {
 
 export async function getTasks(userId) {
   const snapshot = await getDocs(getTasksCollection(userId))
-  const tasks = []
 
-  snapshot.forEach(doc => tasks.push(fromFirestoreTask(doc)))
-
-  return tasks
+  return snapshot.docs.map(doc => fromFirestoreTask(doc))
 }
 
 export async function deleteTask(userId, taskId) {
@@ -32,4 +37,6 @@ export async function updateTask(userId, task) {
   const taskDoc = doc(getTasksCollection(userId), id)
 
   await updateDoc(taskDoc, fields)
+  const snapshot = await getDoc(taskDoc)
+  return fromFirestoreTask(snapshot)
 }

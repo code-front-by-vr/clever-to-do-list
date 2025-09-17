@@ -3,6 +3,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  onAuthStateChanged,
 } from '@/api/firebase'
 
 export async function registerUser(email, password) {
@@ -17,4 +18,13 @@ export async function loginUser(email, password) {
 
 export async function logoutUser() {
   await signOut(auth)
+}
+
+export const getCurrentUser = () => {
+  return new Promise(resolve => {
+    const removeListener = onAuthStateChanged(auth, user => {
+      removeListener()
+      resolve(user)
+    })
+  })
 }

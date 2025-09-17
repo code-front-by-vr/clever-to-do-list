@@ -21,6 +21,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    id: {
+      type: String,
+      default: () => crypto.randomUUID(),
+    },
   },
 
   emits: ['update:modelValue'],
@@ -56,60 +60,68 @@ export default {
 </script>
 
 <template>
-  <div class="form-control">
-    <label>{{ label }}</label>
-    <div class="input-wrapper">
-      <input :type="inputType" v-model="value" :placeholder :required />
+  <div class="input">
+    <label class="input__label" :for="id">{{ label }}</label>
+    <div class="input__wrapper">
+      <input
+        :id
+        class="input__field"
+        :type="inputType"
+        v-model="value"
+        :placeholder
+        :required
+        :aria-label="label"
+      />
       <button
         v-if="type === 'password'"
         type="button"
         class="toggle-password"
         @click="handleTogglePassword"
       >
-        <Eye v-if="!showPassword" class="icon" />
-        <EyeOff v-else class="icon" />
+        <Eye v-if="!showPassword" class="toggle-password__icon" />
+        <EyeOff v-else class="toggle-password__icon" />
       </button>
     </div>
   </div>
 </template>
 
 <style scoped>
-.form-control {
+.input {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
 }
 
-label {
+.input__label {
   font-size: var(--font-size-md);
   font-weight: var(--fw-medium);
   color: var(--color-text-primary);
+  margin-bottom: var(--space-md);
 }
 
-.input-wrapper {
+.input__wrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-input {
+.input__field {
   width: 100%;
   padding: var(--space-md);
-  padding-right: 40px;
   border: 1px solid transparent;
   border-bottom: 1px solid var(--color-text-muted);
   font-size: var(--font-size-base);
   transition: all 0.3s ease;
 }
 
-input:focus-visible {
+.input__field:focus-visible {
   outline: none;
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-md);
   box-shadow: 0 0 0 3px var(--shadow-primary);
 }
 
-input::placeholder {
+.input__field::placeholder {
   color: var(--color-text-muted);
 }
 
@@ -121,7 +133,7 @@ input::placeholder {
   cursor: pointer;
 }
 
-.icon {
+.toggle-password__icon {
   width: var(--space-xl);
   height: var(--space-xl);
   color: var(--color-text-muted);

@@ -13,7 +13,6 @@ export default {
     }
   },
   computed: {
-    // TODO: mutations - updateTaskById
     ...mapState('tasks', ['tasks']),
   },
   methods: {
@@ -75,11 +74,11 @@ export default {
         />
       </div>
     </div>
-    <Button class="tasks__button" @click="handleAddTask">Add Task</Button>
+    <Button class="tasks__button" @click="handleAddTask()">Add Task</Button>
     <TaskModal
       v-if="isShowModal"
       :taskId="taskId"
-      @close="handleCloseModal"
+      @close="handleCloseModal()"
       :isEditing="!!taskId"
     />
   </div>

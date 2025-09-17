@@ -33,19 +33,19 @@ export default {
       <CircleCheck
         v-if="task.done"
         class="task-item__icon task-item__icon--done"
-        @click="toggleTask"
+        @click="toggleTask()"
       />
-      <Circle v-else class="task-item__icon" @click="toggleTask" />
+      <Circle v-else class="task-item__icon" @click="toggleTask()" />
       <h4 :class="['task-item__title', { 'task-item__title--done': task.done }]">
         {{ task.title }}
       </h4>
     </div>
 
     <div class="task-item__actions">
-      <button @click="handleEditTask" class="task-item__button task-item__button--edit">
+      <button @click="handleEditTask()" class="task-item__button task-item__button--edit">
         <Edit class="task-item__icon-action" />
       </button>
-      <button @click="handleDeleteTask" class="task-item__button task-item__button--delete">
+      <button @click="handleDeleteTask()" class="task-item__button task-item__button--delete">
         <Trash2 class="task-item__icon-action" />
       </button>
     </div>

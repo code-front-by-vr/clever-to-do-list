@@ -1,16 +1,30 @@
-import { addTask, getTasks, deleteTask, updateTask } from '@/api/task'
+import { addTask, deleteTask, updateTask, getTasksByDateRange } from '@/api/task'
+import { isSameDay } from '@/lib/utils/date'
 
 export default {
   namespaced: true,
   state: () => ({
     tasks: [],
+    selectedDate: '',
   }),
   getters: {
     taskById: state => id => state.tasks.find(task => task.id === id),
+    tasksByDate: state => date => {
+      const targetDate = new Date(date)
+
+      return state.tasks.filter(task => {
+        const taskDate = new Date(task.date)
+
+        return isSameDay(taskDate, targetDate)
+      })
+    },
   },
   mutations: {
-    setTasks(state, tasks) {
+    setTasksForMonth(state, tasks) {
       state.tasks = tasks
+    },
+    setSelectedDate(state, date) {
+      state.selectedDate = date
     },
     addTask(state, task) {
       state.tasks.push(task)
@@ -24,15 +38,19 @@ export default {
     },
   },
   actions: {
-    async fetchTasks({ commit, rootState }) {
+    async fetchTasksForTheMonth({ commit, rootState }, { year, month }) {
       try {
         const userId = rootState.auth.user?.uid
         if (!userId) throw new Error('User not authenticated')
 
-        const tasks = await getTasks(userId)
-        commit('setTasks', tasks)
+        const startDate = new Date(year, month, 1)
+        const endDate = new Date(year, month + 1, 0)
+        endDate.setHours(23, 59, 59, 999)
+
+        const tasks = await getTasksByDateRange(userId, startDate, endDate)
+        commit('setTasksForMonth', tasks)
       } catch (err) {
-        console.log('Tasks/fetchTasks error: ', err.message)
+        console.log('Tasks/fetchTasksForTheMonth error: ', err.message)
         throw err
       }
     },

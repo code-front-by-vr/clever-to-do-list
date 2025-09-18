@@ -6,10 +6,8 @@ import {
   updateDoc,
   collection,
   getDoc,
-  query,
-  where,
 } from 'firebase/firestore/lite'
-import { db } from '@/api/firebase'
+import { db, query, where } from '@/api/firebase'
 import { toFirestoreTask, fromFirestoreTask } from '@/lib/adapters'
 import { toTimestamp } from '@/lib/utils/date'
 
@@ -33,7 +31,7 @@ export async function getTasksByDateRange(userId, startDate, endDate) {
   )
 
   const snapshot = await getDocs(q)
-  return snapshot.docs.map(doc => fromFirestoreTask(doc))
+  return snapshot.docs.map(fromFirestoreTask)
 }
 
 export async function deleteTask(userId, taskId) {

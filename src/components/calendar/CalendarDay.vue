@@ -20,10 +20,8 @@ export default {
       return this.tasksByDay.some(task => task.done)
     },
     isSelected() {
-      return (
-        this.$store.state.tasks.selectedDate &&
-        isSameDay(this.day.date, this.$store.state.tasks.selectedDate)
-      )
+      const selectedDate = this.$store.state.tasks.selectedDate
+      return selectedDate && isSameDay(this.day.date, selectedDate)
     },
   },
   methods: {
@@ -45,7 +43,7 @@ export default {
     </div>
     <div
       class="calendar__status"
-      :class="[{ 'calendar__status--pending': hasPending }, { 'calendar__status--done': hasDone }]"
+      :class="{ 'calendar__status--pending': hasPending, 'calendar__status--done': hasDone }"
     ></div>
   </div>
 </template>
@@ -105,7 +103,7 @@ export default {
   content: '';
   width: var(--space-sm);
   height: var(--space-sm);
-  border-radius: var(--radius-50);
+  border-radius: var(--radius-rounded);
   background-color: transparent;
 }
 

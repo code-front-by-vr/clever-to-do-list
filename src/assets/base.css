@@ -31,11 +31,11 @@
   --gradient-primary: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
 
   /* Layout */
-  --container-narrow: 400px;
-  --container-normal: 600px;
-  --container-medium: 768px;
-  --container-wide: 1170px;
-  --container-full: 100%;
+  --container-narrow: 400px; /* mobile */
+  --container-normal: 600px; /* small tablets */
+  --container-medium: 768px; /* tablets / small desktop */
+  --container-wide: 1200px; /* large desktop */
+  --container-xl: 1440px; /* extra large desktop */
 
   /* Typography */
   --font-interface: 'Inter', sans-serif;
@@ -61,7 +61,7 @@
   --radius-md: 8px;
   --radius-lg: 10px;
   --radius-xl: 16px;
-  --radius-50: 50%;
+  --radius-rounded: 50%;
   --radius-full: 100%;
 
   /* Spacing */

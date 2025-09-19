@@ -1,9 +1,9 @@
 <script>
-import TaskCalendar from '@/components/calendar/TaskCalendar.vue'
 import Button from '@/components/common/Button.vue'
 import TaskModal from '@/components/task/TaskModal.vue'
 import TaskItem from '@/components/task/TaskItem.vue'
-import { mapState } from 'vuex'
+import CalendarDay from '@/components/calendar/CalendarDay.vue'
+import { generateCalendarDays } from '@/lib/utils/date'
 
 export default {
   data() {
@@ -13,7 +13,12 @@ export default {
     }
   },
   computed: {
-    ...mapState('tasks', ['tasks']),
+    days() {
+      return generateCalendarDays()
+    },
+    tasksByDate() {
+      return this.$store.getters['tasks/tasksByDate'](this.$store.state.tasks.selectedDate)
+    },
   },
   methods: {
     handleCloseModal() {
@@ -42,30 +47,39 @@ export default {
   },
   async mounted() {
     try {
-      await this.$store.dispatch('tasks/fetchTasks')
-    } catch (err) {
-      console.error('Tasks mounted error:', err)
+      const today = new Date()
+      await this.$store.dispatch('tasks/fetchTasksForTheMonth', {
+        year: today.getFullYear(),
+        month: today.getMonth(),
+      })
+      await this.$store.commit('tasks/setSelectedDate', today)
+    } catch (error) {
+      console.error('Tasks mounted error:', error)
     }
   },
   components: {
-    TaskCalendar,
     Button,
     TaskModal,
     TaskItem,
+    CalendarDay,
   },
 }
 </script>
 
 <template>
   <div class="tasks">
-    <TaskCalendar class="tasks__calendar" />
+    <div class="task__calendar">
+      <CalendarDay v-for="day in days" :key="day.id" :day="day" />
+    </div>
 
     <div class="tasks__container">
-      <h2 class="tasks__title">Tasks today: {{ tasks.length }}</h2>
-
+      <h2 v-if="tasksByDate.length > 0" class="tasks__title">
+        Tasks today: {{ tasksByDate.length }}
+      </h2>
+      <h2 v-else class="tasks__title">No tasks for this day</h2>
       <div class="task__list">
         <TaskItem
-          v-for="task in tasks"
+          v-for="task in tasksByDate"
           :key="task.id"
           :task="task"
           @edit="handleEditTask"
@@ -86,14 +100,43 @@ export default {
 
 <style scoped>
 .tasks {
+  max-width: var(--container-wide);
   height: 100%;
   padding: var(--space-3xl) var(--space-lg);
   display: flex;
   flex-direction: column;
   gap: var(--space-xl);
 }
+.task__calendar {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--space-lg);
+  overflow-x: auto;
+  padding: var(--space-md) 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-text-muted) transparent;
+}
 
+.task__calendar::-webkit-scrollbar {
+  height: 6px;
+}
+
+.task__calendar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: var(--radius-sm);
+}
+
+.task__calendar::-webkit-scrollbar-thumb {
+  background: var(--color-text-muted);
+  border-radius: var(--radius-sm);
+}
+
+.task__calendar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
+}
 .tasks__container {
+  padding: 0 var(--space-4xl);
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -104,7 +147,6 @@ export default {
   font-size: var(--font-size-2xl);
   font-weight: var(--fw-medium);
   color: var(--color-text-primary);
-  margin-top: var(--space-xl);
 }
 
 .task__list {
@@ -116,9 +158,9 @@ export default {
 }
 
 .tasks__button {
-  width: 50%;
+  width: auto;
   margin: 0 auto;
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--space-md) var(--space-6xl);
   font-size: var(--font-size-lg);
 }
 </style>

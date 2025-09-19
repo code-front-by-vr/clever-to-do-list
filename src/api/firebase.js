@@ -6,7 +6,19 @@ import {
   signOut,
   onAuthStateChanged,
 } from 'firebase/auth'
-import { collection, getFirestore, Timestamp } from 'firebase/firestore/lite'
+import {
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc,
+  getDoc,
+  collection,
+  getFirestore,
+  Timestamp,
+  query,
+  where,
+} from 'firebase/firestore/lite'
 import { firebaseConfig } from '@/config/firebase'
 
 const app = initializeApp(firebaseConfig)
@@ -21,6 +33,14 @@ export {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc,
+  getDoc,
   collection,
   Timestamp,
+  query,
+  where,
 }

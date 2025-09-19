@@ -1,12 +1,4 @@
-import {
-  addDoc,
-  getDocs,
-  deleteDoc,
-  doc,
-  updateDoc,
-  collection,
-  getDoc,
-} from 'firebase/firestore/lite'
+import { addDoc, getDocs, deleteDoc, doc, updateDoc, collection, getDoc } from '@/api/firebase'
 import { db, query, where } from '@/api/firebase'
 import { toFirestoreTask, fromFirestoreTask } from '@/lib/adapters'
 import { toTimestamp } from '@/lib/utils/date'

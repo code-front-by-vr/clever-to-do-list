@@ -11,7 +11,7 @@ export default {
   },
   computed: {
     tasksByDay() {
-      return this.$store.getters['tasks/tasksByDate'](this.day.date)
+      return this.$store.getters['tasks/tasksByDate'](this.day.date) || []
     },
     hasPending() {
       return this.tasksByDay.some(task => !task.done)

@@ -14,7 +14,6 @@ export default {
     return {
       email: '',
       password: '',
-      errorMessage: '',
     }
   },
   methods: {
@@ -23,7 +22,11 @@ export default {
         const user = await loginUser(this.email, this.password)
         this.$router.push('/tasks')
       } catch (error) {
-        this.errorMessage = error.message
+        this.$toast.showToast({
+          title: 'Oh no!',
+          message: 'Something went wrong. Try again',
+          critical: true,
+        })
       }
     },
   },
@@ -43,8 +46,6 @@ export default {
           placeholder="Enter your password"
           required
         />
-
-        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
 
         <Button type="submit">Sign In</Button>
       </form>
@@ -89,12 +90,6 @@ export default {
   flex-direction: column;
   width: 100%;
   gap: var(--space-2xl);
-}
-
-.error {
-  color: var(--color-accent-warning);
-  font-size: var(--font-size-sm);
-  margin-top: var(--space-xs);
 }
 
 .auth-link {

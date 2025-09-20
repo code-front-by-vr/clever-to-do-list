@@ -5,6 +5,7 @@ import App from './App.vue'
 import router from '@/router'
 import store from '@/store'
 import { onAuthStateChanged, auth } from '@/api/firebase'
+import ToastPlugin from '@/plugins/toast'
 
 const app = createApp(App)
 
@@ -17,4 +18,5 @@ onAuthStateChanged(auth, user => {
     store.commit('auth/clearUser')
   }
 })
+app.use(ToastPlugin)
 app.mount('#app')

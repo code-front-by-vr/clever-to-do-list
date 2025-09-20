@@ -1,10 +1,12 @@
 <script>
 import { RouterView } from 'vue-router'
 import Header from '@/components/layout/Header.vue'
+import ToastContainer from '@/components/common/ToastContainer.vue'
 
 export default {
   components: {
     Header,
+    ToastContainer,
   },
 }
 </script>
@@ -14,6 +16,7 @@ export default {
   <main class="container">
     <RouterView />
   </main>
+  <ToastContainer />
 </template>
 
 <style scoped>

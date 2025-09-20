@@ -22,6 +22,8 @@
 
   /* System / feedback */
   --color-accent-warning: #ff6b35; /* errors, toasts */
+  --color-accent-warning-rgb: 255, 107, 53;
+  --color-task-done-rgb: 34, 197, 94;
 
   /* Shadows */
   --shadow-primary: rgba(108, 99, 255, 0.3);

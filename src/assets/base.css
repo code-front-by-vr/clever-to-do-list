@@ -58,6 +58,10 @@
   --fw-semibold: 600;
   --fw-bold: 700;
 
+  /* Borders */
+  --border-transparent: 1px solid transparent;
+  --border-transparent-2: 2px solid transparent;
+
   /* Border radius */
   --radius-sm: 4px;
   --radius-md: 8px;

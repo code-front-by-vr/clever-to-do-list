@@ -1,7 +1,7 @@
 <script>
 import { RouterView } from 'vue-router'
 import Header from '@/components/layout/Header.vue'
-import ToastContainer from '@/components/common/ToastContainer.vue'
+import ToastContainer from '@/components/toast/ToastContainer.vue'
 
 export default {
   components: {

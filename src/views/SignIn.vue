@@ -25,7 +25,7 @@ export default {
         this.$toast.showToast({
           title: 'Oh no!',
           message: 'Something went wrong. Try again',
-          critical: true,
+          type: 'error',
         })
       }
     },

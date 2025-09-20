@@ -108,7 +108,7 @@ export default {
 .input__field {
   width: 100%;
   padding: var(--space-md);
-  border: 1px solid transparent;
+  border: var(--border-transparent);
   border-bottom: 1px solid var(--color-text-muted);
   font-size: var(--font-size-base);
   transition: all 0.3s ease;

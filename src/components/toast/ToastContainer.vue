@@ -1,5 +1,6 @@
 <script>
 import { LucideX } from 'lucide-vue-next'
+
 export default {
   name: 'ToastContainer',
   components: {
@@ -12,16 +13,16 @@ export default {
   <div class="toast">
     <transition-group name="toast" tag="div">
       <div
-        v-for="toast in $toast.state.toasts"
+        v-for="toast in $toast.toasts"
         :key="toast.id"
         class="toast__item"
-        :class="{ error: toast.critical, success: !toast.critical }"
+        :class="['toast__item-' + toast.type]"
       >
         <div class="toast__content">
           <h4 class="toast__title">{{ toast.title }}</h4>
           <p class="toast__message">{{ toast.message }}</p>
         </div>
-        <button v-if="toast.critical" @click="$toast.closeToast(toast.id)" class="toast__close">
+        <button @click="$toast.closeToast(toast.id)" class="toast__close">
           <LucideX class="toast__close-icon" />
         </button>
       </div>
@@ -46,15 +47,19 @@ export default {
   background: var(--color-surface);
   padding: var(--space-md) var(--space-lg);
   border-radius: var(--radius-lg);
-  border: 1px solid transparent;
+  border: var(--border-transparent);
 }
 
-.toast__item.error {
-  border: 1px solid rgba(var(--color-accent-warning-rgb), 0.4);
+.toast__item-success {
+  border-color: rgba(var(--color-task-done-rgb), 0.4);
 }
 
-.toast__item.success {
-  border: 1px solid rgba(var(--color-task-done-rgb), 0.4);
+.toast__item-error {
+  border-color: rgba(var(--color-accent-warning-rgb), 0.4);
+}
+
+.toast__item-info {
+  border-color: rgba(var(--color-secondary-rgb), 0.4);
 }
 
 .toast__content {

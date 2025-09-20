@@ -2,14 +2,12 @@ import { reactive } from 'vue'
 
 export default {
   install(app) {
-    const state = reactive({
-      toasts: [],
-    })
+    const toasts = reactive([])
 
-    function showToast({ title, message, critical = false, duration = 4000 }) {
+    function showToast({ title, message, type = 'info', critical = false, duration = 4000 }) {
       const id = crypto.randomUUID()
 
-      const toast = { id, title, message, critical, timeoutId: null }
+      const toast = { id, title, message, type, critical, timeoutId: null }
 
       if (!critical) {
         toast.timeoutId = setTimeout(() => {
@@ -17,21 +15,23 @@ export default {
         }, duration)
       }
 
-      state.toasts.push(toast)
+      toasts.push(toast)
 
       return id
     }
 
     function closeToast(id) {
-      const index = state.toasts.findIndex(t => t.id === id)
-      if (index === -1) return
+      const toast = toasts.find(t => t.id === id)
+      if (!toast) return
 
-      const toast = state.toasts[index]
       if (toast.timeoutId) clearTimeout(toast.timeoutId)
 
-      state.toasts.splice(index, 1)
+      const idx = toasts.indexOf(toast)
+      if (idx !== -1) {
+        toasts.splice(idx, 1)
+      }
     }
 
-    app.config.globalProperties.$toast = { showToast, closeToast, state }
+    app.config.globalProperties.$toast = { showToast, closeToast, toasts }
   },
 }

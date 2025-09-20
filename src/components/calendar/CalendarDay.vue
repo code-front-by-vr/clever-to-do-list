@@ -56,7 +56,7 @@ export default {
   align-items: center;
   gap: var(--space-xs);
   background-color: var(--color-surface);
-  border: 2px solid transparent;
+  border: var(--border-transparent-2);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.3s ease;
@@ -72,7 +72,8 @@ export default {
 }
 
 .calendar__day--selected {
-  border: 2px solid var(--color-primary);
+  border: var(--border-transparent-2);
+  border-color: var(--color-primary);
 }
 
 .calendar__label {

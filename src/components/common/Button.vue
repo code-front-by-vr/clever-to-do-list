@@ -31,7 +31,7 @@ export default {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid transparent;
+  border: var(--border-transparent-2);
 }
 .button--primary {
   background: var(--color-primary);

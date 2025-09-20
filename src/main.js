@@ -6,6 +6,7 @@ import router from '@/router'
 import store from '@/store'
 import { onAuthStateChanged, auth } from '@/api/firebase'
 import ToastPlugin from '@/plugins/toast'
+import VueVirtualScroller from 'vue-virtual-scroller'
 
 const app = createApp(App)
 
@@ -19,4 +20,5 @@ onAuthStateChanged(auth, user => {
   }
 })
 app.use(ToastPlugin)
+app.use(VueVirtualScroller)
 app.mount('#app')

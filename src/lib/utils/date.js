@@ -25,25 +25,50 @@ export function formatDateToDisplayValue(date) {
 const weekdayFormatter = new Intl.DateTimeFormat('en-US', { weekday: 'short' })
 const dayFormatter = new Intl.DateTimeFormat('en-US', { day: '2-digit' })
 
-export function generateCalendarDays() {
-  const today = new Date()
-  const year = today.getFullYear()
-  const month = today.getMonth()
+// TODO: remove this function after finishing the task
+// export function generateCalendarDays() {
+//   const today = new Date()
+//   const year = today.getFullYear()
+//   const month = today.getMonth()
 
-  const lastDayOfMonth = new Date(year, month + 1, 0).getDate()
-  const currentDay = today.getDate()
+//   const lastDayOfMonth = new Date(year, month + 1, 0).getDate()
+//   const currentDay = today.getDate()
 
+//   const days = []
+
+//   for (let day = currentDay; day <= lastDayOfMonth; day++) {
+//     const date = new Date(year, month, day)
+//     days.push({
+//       id: formatDateToDisplayValue(date),
+//       date,
+//       weekday: weekdayFormatter.format(date),
+//       formattedDate: dayFormatter.format(date),
+//     })
+//   }
+//   return days
+// }
+
+export function generateCalendarDays(startDate = new Date(), endDate = null) {
+  const start = new Date(startDate)
   const days = []
 
-  for (let day = currentDay; day <= lastDayOfMonth; day++) {
-    const date = new Date(year, month, day)
+  const finalDate = endDate
+    ? new Date(endDate)
+    : new Date(start.getFullYear(), start.getMonth() + 1, 0)
+
+  const current = new Date(start)
+
+  while (current <= finalDate) {
+    const date = new Date(current)
     days.push({
       id: formatDateToDisplayValue(date),
       date,
       weekday: weekdayFormatter.format(date),
       formattedDate: dayFormatter.format(date),
     })
+    current.setDate(current.getDate() + 1)
   }
+
   return days
 }
 

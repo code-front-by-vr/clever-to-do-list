@@ -53,16 +53,19 @@ export default {
   --_border-color: var(--border-color, transparent);
   padding: var(--space-md) var(--space-sm);
   display: flex;
+  width: 84px;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-xs);
+  justify-content: center;
+  flex-shrink: 0;
+  padding: var(--space-md) var(--space-sm);
   background-color: var(--color-surface);
   border: var(--border-thin-2) var(--_border-color);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 80px;
-  flex-shrink: 0;
+  margin: var(--space-xs);
+  position: relative;
 }
 
 .calendar__day:hover {

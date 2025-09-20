@@ -1,5 +1,6 @@
 <script>
 import { RecycleScroller } from 'vue-virtual-scroller'
+import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import Button from '@/components/common/Button.vue'
 import TaskModal from '@/components/task/TaskModal.vue'
 import TaskItem from '@/components/task/TaskItem.vue'
@@ -71,6 +72,19 @@ export default {
     handleScrollEnd() {
       this.fetchMoreDays()
     },
+
+    scrollLeft() {
+      const scroller = this.$refs.calendarScroller?.$el
+      if (scroller) {
+        scroller.scrollBy({ left: -300, behavior: 'smooth' })
+      }
+    },
+    scrollRight() {
+      const scroller = this.$refs.calendarScroller?.$el
+      if (scroller) {
+        scroller.scrollBy({ left: 300, behavior: 'smooth' })
+      }
+    },
   },
   async mounted() {
     try {
@@ -93,24 +107,35 @@ export default {
     TaskItem,
     CalendarDay,
     RecycleScroller,
+    ChevronLeft,
+    ChevronRight,
   },
 }
 </script>
 
 <template>
   <div class="tasks">
-    <RecycleScroller
-      class="task__calendar"
-      :items="days"
-      key-field="id"
-      :item-size="100"
-      direction="horizontal"
-      @scroll-end="handleScrollEnd"
-      v-slot="{ item }"
-      :buffer="1000"
-    >
-      <CalendarDay :day="item" :key="item.id" />
-    </RecycleScroller>
+    <div class="calendar">
+      <button class="calendar__nav calendar__nav-left" @click="scrollLeft">
+        <ChevronLeft class="nav-icon" />
+      </button>
+      <RecycleScroller
+        ref="calendarScroller"
+        class="task__calendar"
+        :items="days"
+        key-field="id"
+        :item-size="100"
+        direction="horizontal"
+        @scroll-end="handleScrollEnd"
+        v-slot="{ item }"
+        :buffer="1000"
+      >
+        <CalendarDay :day="item" :key="item.id" />
+      </RecycleScroller>
+      <button class="calendar__nav calendar__nav-right" @click="scrollRight">
+        <ChevronRight class="nav-icon" />
+      </button>
+    </div>
 
     <div class="tasks__container">
       <h2 v-if="tasksByDate.length > 0" class="tasks__title">
@@ -147,6 +172,47 @@ export default {
   flex-direction: column;
   gap: var(--space-xl);
 }
+
+.calendar {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.calendar__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-2xl);
+  height: var(--space-2xl);
+  border: none;
+  border-radius: var(--radius-rounded);
+  background: var(--color-gradient);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition:
+    background 0.3s,
+    transform 0.2s;
+}
+
+.calendar__nav:hover {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 var(--space-xs) var(--space-md) var(--shadow-primary-hover);
+}
+
+.calendar__nav-left {
+  left: var(--space-md);
+}
+.calendar__nav-right {
+  right: var(--space-md);
+}
+
 .task__calendar {
   height: 110px;
   overflow-x: auto;
@@ -157,7 +223,7 @@ export default {
 }
 
 .task__calendar::-webkit-scrollbar {
-  height: 6px;
+  height: var(--space-xs);
 }
 
 .task__calendar::-webkit-scrollbar-track {

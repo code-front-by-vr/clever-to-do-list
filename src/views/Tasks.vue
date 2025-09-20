@@ -1,4 +1,5 @@
 <script>
+import { RecycleScroller } from 'vue-virtual-scroller'
 import Button from '@/components/common/Button.vue'
 import TaskModal from '@/components/task/TaskModal.vue'
 import TaskItem from '@/components/task/TaskItem.vue'
@@ -8,16 +9,15 @@ import { generateCalendarDays } from '@/lib/utils/date'
 export default {
   data() {
     return {
+      days: [],
       isShowModal: false,
       taskId: null,
+      loadingDays: false,
     }
   },
   computed: {
-    days() {
-      return generateCalendarDays()
-    },
     tasksByDate() {
-      return this.$store.getters['tasks/tasksByDate'](this.$store.state.tasks.selectedDate)
+      return this.$store.getters['tasks/tasksByDate'](this.$store.state.tasks.selectedDate) || []
     },
   },
   methods: {
@@ -44,10 +44,40 @@ export default {
       const updatedTask = { ...task, done: !task.done }
       this.$store.dispatch('tasks/updateTask', updatedTask)
     },
+
+    async fetchMoreDays() {
+      if (this.loadingDays) return
+      this.loadingDays = true
+
+      const lastDay = this.days[this.days.length - 1].date
+      const startNextMonth = new Date(lastDay.getFullYear(), lastDay.getMonth() + 1, 1)
+      const endNextMonth = new Date(lastDay.getFullYear(), lastDay.getMonth() + 2, 0)
+
+      const newDays = generateCalendarDays(startNextMonth, endNextMonth)
+      this.days.push(...newDays)
+
+      try {
+        await this.$store.dispatch('tasks/fetchTasksForTheMonth', {
+          year: startNextMonth.getFullYear(),
+          month: startNextMonth.getMonth(),
+        })
+      } catch (error) {
+        console.error('Tasks fetchMoreDays error:', error)
+      } finally {
+        this.loadingDays = false
+      }
+    },
+
+    handleScrollEnd() {
+      this.fetchMoreDays()
+    },
   },
   async mounted() {
     try {
       const today = new Date()
+      const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+      this.days = generateCalendarDays(today, endOfMonth)
+
       await this.$store.dispatch('tasks/fetchTasksForTheMonth', {
         year: today.getFullYear(),
         month: today.getMonth(),
@@ -62,15 +92,25 @@ export default {
     TaskModal,
     TaskItem,
     CalendarDay,
+    RecycleScroller,
   },
 }
 </script>
 
 <template>
   <div class="tasks">
-    <div class="task__calendar">
-      <CalendarDay v-for="day in days" :key="day.id" :day="day" />
-    </div>
+    <RecycleScroller
+      class="task__calendar"
+      :items="days"
+      key-field="id"
+      :item-size="100"
+      direction="horizontal"
+      @scroll-end="handleScrollEnd"
+      v-slot="{ item }"
+      :buffer="1000"
+    >
+      <CalendarDay :day="item" :key="item.id" />
+    </RecycleScroller>
 
     <div class="tasks__container">
       <h2 v-if="tasksByDate.length > 0" class="tasks__title">
@@ -108,12 +148,10 @@ export default {
   gap: var(--space-xl);
 }
 .task__calendar {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: var(--space-lg);
+  height: 110px;
   overflow-x: auto;
-  padding: var(--space-md) 0;
+  overflow-y: visible;
+  padding: var(--space-sm) 0;
   scrollbar-width: thin;
   scrollbar-color: var(--color-text-muted) transparent;
 }

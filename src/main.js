@@ -5,6 +5,7 @@ import App from './App.vue'
 import router from '@/router'
 import store from '@/store'
 import { onAuthStateChanged, auth } from '@/api/firebase'
+import VueVirtualScroller from 'vue-virtual-scroller'
 
 const app = createApp(App)
 
@@ -17,4 +18,5 @@ onAuthStateChanged(auth, user => {
     store.commit('auth/clearUser')
   }
 })
+app.use(VueVirtualScroller)
 app.mount('#app')

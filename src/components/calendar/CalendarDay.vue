@@ -50,25 +50,28 @@ export default {
 
 <style scoped>
 .calendar__day {
-  padding: var(--space-md) var(--space-sm);
   display: flex;
+  width: 84px;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-xs);
+  justify-content: center;
+  flex-shrink: 0;
+  padding: var(--space-md) var(--space-sm);
   background-color: var(--color-surface);
   border: 2px solid transparent;
-  border-radius: var(--radius-md);
   cursor: pointer;
+  border-radius: var(--radius-md);
   transition: all 0.3s ease;
-  min-width: 80px;
-  flex-shrink: 0;
+  margin: var(--space-xs);
+  position: relative;
 }
 
 .calendar__day:hover {
   background: var(--color-gradient);
   border-color: var(--color-text-muted);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px var(--shadow-primary);
+  transform: translateY(-4px);
+  z-index: 10;
+  position: relative;
 }
 
 .calendar__day--selected {

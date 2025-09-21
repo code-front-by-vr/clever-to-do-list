@@ -12,7 +12,7 @@ export default {
       this.$emit('edit', this.task.id)
     },
     handleDeleteTask() {
-      this.$emit('delete', this.task.id)
+      this.$emit('delete', { date: this.task.date, taskId: this.task.id })
     },
     toggleTask() {
       this.$emit('toggle', this.task.id)

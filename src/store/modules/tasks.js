@@ -1,67 +1,94 @@
 import { addTask, deleteTask, updateTask, getTasksByDateRange } from '@/api/task'
-import { formatDateToDisplayValue, toDate } from '@/lib/utils/date'
+import { formatDateToDisplayValue } from '@/lib/utils/date'
 
 export default {
   namespaced: true,
   state: () => ({
-    tasksByDate: {}, // {['2025-09-21']: Task[], ['2025-09-22']: Task[]...}
+    // TODO: remove notes before task check
+    monthToDay: {}, // {['2025-09']: ['2025-09-21', '2025-09-22', ...], ['2025-10']: ['2025-10-21', '2025-10-22', ...]...}
+    dayToTasks: {}, // {['2025-09-21']: [TaskId, TaskId, ...], ['2025-09-22']: [TaskId, TaskId, ...]...}
+    tasks: {}, // {taskId: Task, taskId: Task, ...}
     selectedDate: '',
-    loadedMonths: [], // ['2025-09', '2025-10', '2025-11'...']
+    loadedMonths: new Map(),
   }),
   getters: {
     taskById: state => id => {
-      for (const dayTasks of Object.values(state.tasksByDate)) {
-        const task = dayTasks.find(task => task.id === id)
-        if (task) return task
-      }
-      return null
+      return state.tasks[id] || null
     },
     tasksByDate: state => date => {
-      if (!date) return []
-
-      const key = formatDateToDisplayValue(date)
-      return state.tasksByDate[key] || []
+      const dayKey = formatDateToDisplayValue(date)
+      const taskIds = state.dayToTasks[dayKey] || []
+      return taskIds.map(taskId => state.tasks[taskId])
     },
   },
   mutations: {
     setTasksForMonth(state, tasks) {
-      const newTasksByDate = {}
-
       tasks.forEach(task => {
-        const key = formatDateToDisplayValue(task.date)
+        const dateObj = new Date(task.date)
+        const year = dateObj.getFullYear()
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0')
 
-        if (!newTasksByDate[key]) newTasksByDate[key] = []
+        const monthKey = `${year}-${month}`
+        const dayKey = formatDateToDisplayValue(task.date)
 
-        newTasksByDate[key].push(task)
+        if (!state.monthToDay[monthKey]) state.monthToDay[monthKey] = []
+        if (!state.monthToDay[monthKey].includes(dayKey)) {
+          state.monthToDay[monthKey].push(dayKey)
+        }
+
+        if (!state.dayToTasks[dayKey]) state.dayToTasks[dayKey] = []
+        if (!state.dayToTasks[dayKey].includes(task.id)) {
+          state.dayToTasks[dayKey].push(task.id)
+        }
+
+        state.tasks[task.id] = task
       })
-      state.tasksByDate = {
-        ...state.tasksByDate,
-        ...newTasksByDate,
-      }
     },
     setSelectedDate(state, date) {
       state.selectedDate = date
     },
     addTask(state, task) {
-      const key = formatDateToDisplayValue(task.date)
+      const dayKey = formatDateToDisplayValue(task.date)
 
-      if (!state.tasksByDate[key]) state.tasksByDate[key] = []
-      state.tasksByDate[key].push(task)
+      if (!state.dayToTasks[dayKey]) state.dayToTasks[dayKey] = []
+      state.dayToTasks[dayKey].push(task.id)
+      state.tasks[task.id] = task
     },
-    deleteTask(state, id) {
-      for (const key in state.tasksByDate) {
-        state.tasksByDate[key] = state.tasksByDate[key].filter(task => task.id !== id)
+
+    deleteTask(state, { date, taskId }) {
+      const dayKey = formatDateToDisplayValue(date)
+
+      state.dayToTasks[dayKey] = state.dayToTasks[dayKey].filter(id => id !== taskId)
+
+      if (state.dayToTasks[dayKey].length === 0) {
+        delete state.dayToTasks[dayKey]
       }
+
+      delete state.tasks[taskId]
     },
     updateTask(state, updatedTask) {
-      const key = formatDateToDisplayValue(updatedTask.date)
+      const prevTask = state.tasks[updatedTask.id]
 
-      state.tasksByDate[key] = state.tasksByDate[key].map(task =>
-        task.id === updatedTask.id ? updatedTask : task
-      )
+      const oldDayKey = formatDateToDisplayValue(prevTask.date)
+      const newDayKey = formatDateToDisplayValue(updatedTask.date)
+
+      if (oldDayKey !== newDayKey) {
+        state.dayToTasks[oldDayKey] = state.dayToTasks[oldDayKey].filter(
+          id => id !== updatedTask.id
+        )
+        if (state.dayToTasks[oldDayKey].length === 0) {
+          delete state.dayToTasks[oldDayKey]
+        }
+
+        if (!state.dayToTasks[newDayKey]) state.dayToTasks[newDayKey] = []
+        if (!state.dayToTasks[newDayKey].includes(updatedTask.id)) {
+          state.dayToTasks[newDayKey].push(updatedTask.id)
+        }
+      }
+      state.tasks[updatedTask.id] = updatedTask
     },
     addLoadedMonth(state, monthKey) {
-      state.loadedMonths.push(monthKey)
+      state.loadedMonths.set(monthKey, true)
     },
   },
   actions: {
@@ -70,9 +97,10 @@ export default {
         const userId = rootState.auth.user?.uid
         if (!userId) throw new Error('User not authenticated')
 
-        const monthKey = `${year}-${month}`
-        if (state.loadedMonths.includes(monthKey)) return
-        // TODO: remove this console.log
+        const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`
+        if (state.loadedMonths.get(monthKey)) return
+
+        // TODO: remove this console.log before task check
         console.log('fetching tasks for the month: ', monthKey)
 
         const startDate = new Date(year, month, 1)
@@ -100,15 +128,15 @@ export default {
         throw err
       }
     },
-    async deleteTask({ commit, rootState }, id) {
+    async deleteTask({ commit, rootState }, { date, taskId }) {
       try {
         const userId = rootState.auth.user?.uid
 
         if (!userId) throw new Error('User not authenticated')
 
-        await deleteTask(userId, id)
+        await deleteTask(userId, taskId)
 
-        commit('deleteTask', id)
+        commit('deleteTask', { date, taskId })
       } catch (err) {
         console.error('Tasks/deleteTask error:', err)
         throw err

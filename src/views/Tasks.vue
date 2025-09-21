@@ -33,12 +33,12 @@ export default {
       this.taskId = taskId
       this.isShowModal = true
     },
-    handleDeleteTask(taskId) {
+    handleDeleteTask({ date, taskId }) {
       if (!taskId) {
         console.error('Task ID is missing:', taskId)
         return
       }
-      this.$store.dispatch('tasks/deleteTask', taskId)
+      this.$store.dispatch('tasks/deleteTask', { date, taskId })
     },
     handleToggleTask(taskId) {
       const task = this.$store.getters['tasks/taskById'](taskId)
@@ -96,7 +96,7 @@ export default {
         year: today.getFullYear(),
         month: today.getMonth(),
       })
-      await this.$store.commit('tasks/setSelectedDate', today)
+      this.$store.commit('tasks/setSelectedDate', today)
     } catch (error) {
       console.error('Tasks mounted error:', error)
     }

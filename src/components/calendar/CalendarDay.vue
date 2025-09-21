@@ -50,13 +50,14 @@ export default {
 
 <style scoped>
 .calendar__day {
+  --_border-color: var(--border-color, transparent);
   padding: var(--space-md) var(--space-sm);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-xs);
   background-color: var(--color-surface);
-  border: 2px solid transparent;
+  border: var(--border-thin-2) var(--_border-color);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.3s ease;
@@ -66,13 +67,13 @@ export default {
 
 .calendar__day:hover {
   background: var(--color-gradient);
-  border-color: var(--color-text-muted);
+  --border-color: var(--color-text-muted);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px var(--shadow-primary);
 }
 
 .calendar__day--selected {
-  border: 2px solid var(--color-primary);
+  --border-color: var(--color-primary);
 }
 
 .calendar__label {

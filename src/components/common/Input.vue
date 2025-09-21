@@ -108,15 +108,15 @@ export default {
 .input__field {
   width: 100%;
   padding: var(--space-md);
-  border: 1px solid transparent;
-  border-bottom: 1px solid var(--color-text-muted);
+  border: var(--border-transparent);
+  border-bottom: var(--border-thin) var(--color-text-muted);
   font-size: var(--font-size-base);
   transition: all 0.3s ease;
 }
 
 .input__field:focus-visible {
   outline: none;
-  border: 1px solid var(--color-primary);
+  border: var(--border-thin) var(--color-primary);
   border-radius: var(--radius-md);
   box-shadow: 0 0 0 3px var(--shadow-primary);
 }

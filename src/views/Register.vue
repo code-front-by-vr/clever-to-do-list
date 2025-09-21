@@ -16,14 +16,11 @@ export default {
       email: '',
       password: '',
       confirmPassword: '',
-      errorMessage: '',
     }
   },
 
   methods: {
     async handleClickRegister() {
-      this.errorMessage = ''
-
       try {
         if (this.password !== this.confirmPassword) {
           throw new Error('Passwords do not match!')
@@ -37,7 +34,11 @@ export default {
 
         this.$router.push('/')
       } catch (error) {
-        this.errorMessage = error.message
+        this.$toast.showToast({
+          title: 'Oh no!',
+          message: 'Something went wrong. Try again',
+          critical: true,
+        })
       }
     },
   },
@@ -64,8 +65,6 @@ export default {
           placeholder="Confirm your password"
           required
         />
-
-        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
 
         <Button type="submit">Register</Button>
       </form>
@@ -110,12 +109,6 @@ export default {
   flex-direction: column;
   width: 100%;
   gap: var(--space-2xl);
-}
-
-.error {
-  color: var(--color-accent-warning);
-  font-size: var(--font-size-sm);
-  margin-top: var(--space-xs);
 }
 
 .auth-link {

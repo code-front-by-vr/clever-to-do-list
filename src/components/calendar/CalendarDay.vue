@@ -51,24 +51,24 @@ export default {
 <style scoped>
 .calendar__day {
   --_border-color: var(--border-color, transparent);
+
+  width: 84px;
   padding: var(--space-md) var(--space-sm);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-xs);
+  justify-content: center;
+  flex-shrink: 0;
   background-color: var(--color-surface);
   border: var(--border-thin-2) var(--_border-color);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 80px;
-  flex-shrink: 0;
 }
 
 .calendar__day:hover {
   background: var(--color-gradient);
   --border-color: var(--color-text-muted);
-  transform: translateY(-2px);
   box-shadow: 0 4px 12px var(--shadow-primary);
 }
 

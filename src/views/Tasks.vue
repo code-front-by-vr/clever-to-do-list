@@ -192,6 +192,7 @@ export default {
   border: none;
   border-radius: var(--radius-rounded);
   background: var(--color-gradient);
+  opacity: 0.8;
   color: var(--color-text-secondary);
   cursor: pointer;
   transition:
@@ -202,6 +203,7 @@ export default {
 .calendar__nav:hover {
   background: var(--color-primary);
   color: var(--color-text-inverse);
+  opacity: 1;
   transform: translateY(-50%) scale(1.1);
   box-shadow: 0 var(--space-xs) var(--space-md) var(--shadow-primary-hover);
 }
@@ -214,10 +216,9 @@ export default {
 }
 
 .task__calendar {
-  height: 110px;
+  height: 100px;
   overflow-x: auto;
   overflow-y: visible;
-  padding: var(--space-sm) 0;
   scrollbar-width: thin;
   scrollbar-color: var(--color-text-muted) transparent;
 }

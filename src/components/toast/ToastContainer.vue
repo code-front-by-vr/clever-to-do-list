@@ -16,7 +16,7 @@ export default {
         v-for="toast in $toast.toasts"
         :key="toast.id"
         class="toast__item"
-        :class="['toast__item-' + toast.type]"
+        :class="`toast__item--${toast.type}`"
       >
         <div class="toast__content">
           <h4 class="toast__title">{{ toast.title }}</h4>
@@ -41,6 +41,8 @@ export default {
 }
 
 .toast__item {
+  --_border-color: var(--border-color);
+
   display: flex;
   align-items: flex-start;
   gap: var(--space-md);
@@ -48,18 +50,19 @@ export default {
   padding: var(--space-md) var(--space-lg);
   border-radius: var(--radius-lg);
   border: var(--border-transparent);
+  border-color: rgba(var(--_border-color), 0.4);
 }
 
-.toast__item-success {
-  border-color: rgba(var(--color-task-done-rgb), 0.4);
+.toast__item--success {
+  --border-color: var(--color-task-done-rgb);
 }
 
-.toast__item-error {
-  border-color: rgba(var(--color-accent-warning-rgb), 0.4);
+.toast__item--error {
+  --border-color: var(--color-accent-warning-rgb);
 }
 
-.toast__item-info {
-  border-color: rgba(var(--color-secondary-rgb), 0.4);
+.toast__item--info {
+  --border-color: var(--color-secondary-rgb);
 }
 
 .toast__content {

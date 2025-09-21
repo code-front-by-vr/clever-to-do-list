@@ -42,7 +42,7 @@ export default {
 .button--primary:hover,
 .button--primary:focus,
 .button--primary:active {
-  box-shadow: 0 8px 20px var(--shadow-primary-hover);
+  box-shadow: var(--shadow-button-primary-hover);
   transform: scale(1.03);
 }
 
@@ -56,7 +56,7 @@ export default {
 .button--outlined:active {
   background-color: var(--color-primary);
   color: var(--color-text-inverse);
-  box-shadow: 0 8px 20px var(--shadow-primary-hover);
+  box-shadow: var(--shadow-button-primary-hover);
   transform: scale(1.03);
 }
 

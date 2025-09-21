@@ -21,15 +21,13 @@ export default {
     }
 
     function closeToast(id) {
-      const toast = toasts.find(t => t.id === id)
-      if (!toast) return
+      const index = toasts.findIndex(t => t.id === id)
+      if (index === -1) return
 
+      const toast = toasts[index]
       if (toast.timeoutId) clearTimeout(toast.timeoutId)
 
-      const idx = toasts.indexOf(toast)
-      if (idx !== -1) {
-        toasts.splice(idx, 1)
-      }
+      toasts.splice(index, 1)
     }
 
     app.config.globalProperties.$toast = { showToast, closeToast, toasts }

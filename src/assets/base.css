@@ -28,6 +28,7 @@
   /* Shadows */
   --shadow-primary: rgba(108, 99, 255, 0.3);
   --shadow-primary-hover: rgba(108, 99, 255, 0.45);
+  --shadow-button-primary-hover: 0 8px 20px var(--shadow-primary-hover);
 
   /* Gradients */
   --gradient-primary: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
@@ -61,6 +62,8 @@
   /* Borders */
   --border-transparent: 1px solid transparent;
   --border-transparent-2: 2px solid transparent;
+  --border-thin: 1px solid;
+  --border-thin-2: 2px solid;
 
   /* Border radius */
   --radius-sm: 4px;

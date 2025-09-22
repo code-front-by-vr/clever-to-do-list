@@ -28,3 +28,9 @@ export const getCurrentUser = () => {
     })
   })
 }
+
+export function requireUserId(user) {
+  if (!user) throw new Error('User not authenticated')
+  if (!user.uid) throw new Error('User object has no uid')
+  return user.uid
+}

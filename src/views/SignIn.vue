@@ -1,22 +1,29 @@
 <script>
-import { loginUser } from '@/api/auth'
+import { loginUser } from '@/services/auth'
 import { RouterLink } from 'vue-router'
-import Button from '@/components/common/Button.vue'
-import Input from '@/components/common/Input.vue'
+import Button from '@/components/shared/ui/Button.vue'
+import Input from '@/components/shared/ui/Input.vue'
+import { Eye, EyeOff } from 'lucide-vue-next'
 
 export default {
   components: {
     Button,
     RouterLink,
     Input,
+    Eye,
+    EyeOff,
   },
   data() {
     return {
       email: '',
       password: '',
+      showPassword: false,
     }
   },
   methods: {
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword
+    },
     async handleClickSignIn() {
       try {
         const user = await loginUser(this.email, this.password)
@@ -38,15 +45,34 @@ export default {
     <div class="sign-in">
       <h2 class="title">Sign In</h2>
       <form @submit.prevent="handleClickSignIn()" class="form">
-        <Input v-model="email" type="email" label="Email" placeholder="Enter your email" required />
+        <Input
+          v-model="email"
+          type="email"
+          name="email"
+          label="Email"
+          placeholder="Enter your email"
+          required
+        />
         <Input
           v-model="password"
-          type="password"
+          :type="showPassword ? 'text' : 'password'"
+          name="password"
           label="Password"
           placeholder="Enter your password"
           required
-        />
-
+        >
+          <template #show-password-toggle>
+            <button
+              type="button"
+              class="password-toggle"
+              @click="togglePasswordVisibility"
+              :aria-label="showPassword ? 'Hide password' : 'Show password'"
+            >
+              <Eye v-if="!showPassword" class="password-toggle__icon" />
+              <EyeOff v-else class="password-toggle__icon" />
+            </button>
+          </template>
+        </Input>
         <Button type="submit">Sign In</Button>
       </form>
 
@@ -112,5 +138,26 @@ export default {
 
 .auth-link a:visited {
   color: var(--color-primary);
+}
+
+.password-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle__icon {
+  width: var(--space-xl);
+  height: var(--space-xl);
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
+}
+
+.password-toggle:hover .password-toggle__icon {
+  color: var(--color-text-primary);
 }
 </style>

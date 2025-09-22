@@ -1,6 +1,4 @@
 <script>
-import { Eye, EyeOff } from 'lucide-vue-next'
-
 export default {
   name: 'Input',
   props: {
@@ -25,14 +23,13 @@ export default {
       type: String,
       default: () => crypto.randomUUID(),
     },
+    name: {
+      type: String,
+      default: '',
+    },
   },
 
   emits: ['update:modelValue'],
-  data() {
-    return {
-      showPassword: false,
-    }
-  },
   computed: {
     value: {
       get() {
@@ -42,20 +39,7 @@ export default {
         this.$emit('update:modelValue', val)
       },
     },
-    inputType() {
-      if (this.type === 'password') {
-        return this.showPassword ? 'text' : 'password'
-      }
-      return this.type
-    },
   },
-
-  methods: {
-    handleTogglePassword() {
-      this.showPassword = !this.showPassword
-    },
-  },
-  components: { Eye, EyeOff },
 }
 </script>
 
@@ -65,22 +49,17 @@ export default {
     <div class="input__wrapper">
       <input
         :id
+        :name
         class="input__field"
-        :type="inputType"
+        :type
         v-model="value"
         :placeholder
         :required
         :aria-label="label"
       />
-      <button
-        v-if="type === 'password'"
-        type="button"
-        class="toggle-password"
-        @click="handleTogglePassword"
-      >
-        <Eye v-if="!showPassword" class="toggle-password__icon" />
-        <EyeOff v-else class="toggle-password__icon" />
-      </button>
+      <div class="input__icon" v-if="$slots['show-password-toggle']">
+        <slot name="show-password-toggle" />
+      </div>
     </div>
   </div>
 </template>
@@ -125,17 +104,11 @@ export default {
   color: var(--color-text-muted);
 }
 
-.toggle-password {
+.input__icon {
   position: absolute;
   right: var(--space-md);
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.toggle-password__icon {
-  width: var(--space-xl);
-  height: var(--space-xl);
-  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
 }
 </style>

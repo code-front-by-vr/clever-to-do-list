@@ -1,7 +1,6 @@
 import { addDoc, getDocs, deleteDoc, doc, updateDoc, collection, getDoc } from '@/api/firebase'
 import { db, query, where } from '@/api/firebase'
-import { toFirestoreTask, fromFirestoreTask } from '@/lib/adapters'
-import { toTimestamp } from '@/lib/utils/date'
+import { toFirestoreTask, fromFirestoreTask, toTimestamp } from '@/lib'
 
 function getTasksCollection(userId) {
   return collection(db, `users/${userId}/tasks`)

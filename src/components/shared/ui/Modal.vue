@@ -1,6 +1,21 @@
 <script>
 export default {
   emits: ['close'],
+  methods: {
+    handleEscapeKey(event) {
+      if (event.key === 'Escape') {
+        this.$emit('close')
+      }
+    },
+  },
+  mounted() {
+    document.body.style.overflow = 'hidden'
+    document.addEventListener('keydown', this.handleEscapeKey)
+  },
+  beforeUnmount() {
+    document.body.style.overflow = 'auto'
+    document.removeEventListener('keydown', this.handleEscapeKey)
+  },
 }
 </script>
 
@@ -27,6 +42,7 @@ export default {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(var(--space-xs));
   display: flex;
   justify-content: center;
   align-items: center;

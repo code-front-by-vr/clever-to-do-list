@@ -1,20 +1,28 @@
 <script>
 import { RecycleScroller } from 'vue-virtual-scroller'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
-import Button from '@/components/common/Button.vue'
+import Button from '@/components/shared/ui/Button.vue'
 import TaskModal from '@/components/task/TaskModal.vue'
 import TaskItem from '@/components/task/TaskItem.vue'
 import CalendarDay from '@/components/calendar/CalendarDay.vue'
-import { generateCalendarDays, formatMonthYear } from '@/lib/utils/date'
+import ConfirmModal from '@/components/shared/ui/ConfirmModal.vue'
+import {
+  generateCalendarDays,
+  formatMonthYear,
+  formatDateToDisplayValue,
+  isSameDay,
+} from '@/lib/utils'
 
 export default {
   data() {
     return {
+      today: new Date(),
       days: [],
-      isShowModal: false,
       taskId: null,
       loadingDays: false,
       currentMonthYear: '',
+      isShowConfirmModal: false,
+      taskToDelete: null,
     }
   },
   computed: {
@@ -23,23 +31,30 @@ export default {
     },
   },
   methods: {
-    handleCloseModal() {
-      this.isShowModal = false
-    },
     handleAddTask() {
-      this.taskId = null
-      this.isShowModal = true
+      this.$refs.taskModalRef?.open()
     },
     handleEditTask(taskId) {
-      this.taskId = taskId
-      this.isShowModal = true
+      this.$refs.taskModalRef?.open(taskId)
     },
     handleDeleteTask({ date, taskId }) {
       if (!taskId) {
         console.error('Task ID is missing:', taskId)
         return
       }
-      this.$store.dispatch('tasks/deleteTask', { date, taskId })
+      this.taskToDelete = { date, taskId }
+      this.isShowConfirmModal = true
+    },
+    handleConfirmDelete() {
+      if (this.taskToDelete) {
+        this.$store.dispatch('tasks/deleteTask', this.taskToDelete)
+        this.taskToDelete = null
+      }
+      this.isShowConfirmModal = false
+    },
+    handleCancelDelete() {
+      this.taskToDelete = null
+      this.isShowConfirmModal = false
     },
     handleToggleTask(taskId) {
       const task = this.$store.getters['tasks/taskById'](taskId)
@@ -80,6 +95,17 @@ export default {
       if (day) this.currentMonthYear = formatMonthYear(day.date)
     },
 
+    handleDayClick(date) {
+      this.$store.commit('tasks/SET_SELECTED_DATE', date)
+
+      const scroller = this.$refs.calendarScroller
+      const index = this.days.findIndex(day => isSameDay(day.date, date))
+
+      if (index !== -1) {
+        scroller.scrollToItem(index, { behavior: 'smooth' })
+      }
+    },
+
     handleScrollEnd() {
       this.fetchMoreDays()
       this.updateCurrentMonthYear()
@@ -97,20 +123,32 @@ export default {
         scroller.scrollBy({ left: 300, behavior: 'smooth' })
       }
     },
+
+    scrollToToday() {
+      const scroller = this.$refs.calendarScroller
+      if (!scroller) return
+
+      const todayId = formatDateToDisplayValue(this.today)
+      const index = this.days.findIndex(day => day.id === todayId)
+
+      if (index !== -1) {
+        scroller.scrollToItem(index, { behavior: 'smooth' })
+        this.$store.commit('tasks/SET_SELECTED_DATE', this.today)
+      }
+    },
   },
   async mounted() {
     try {
-      const today = new Date()
-      const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0)
-      this.days = generateCalendarDays(today, endOfMonth)
+      const endOfMonth = new Date(this.today.getFullYear(), this.today.getMonth() + 1, 0)
+      this.days = generateCalendarDays(this.today, endOfMonth)
 
       await this.$store.dispatch('tasks/fetchTasksForTheMonth', {
-        year: today.getFullYear(),
-        month: today.getMonth(),
+        year: this.today.getFullYear(),
+        month: this.today.getMonth(),
       })
-      this.$store.commit('tasks/SET_SELECTED_DATE', today)
+      this.$store.commit('tasks/SET_SELECTED_DATE', this.today)
 
-      this.currentMonthYear = formatMonthYear(today)
+      this.currentMonthYear = formatMonthYear(this.today)
 
       const scrollerEl = this.$refs.calendarScroller?.$el
       if (scrollerEl) scrollerEl.addEventListener('scroll', this.updateCurrentMonthYear)
@@ -127,6 +165,7 @@ export default {
     TaskModal,
     TaskItem,
     CalendarDay,
+    ConfirmModal,
     RecycleScroller,
     ChevronLeft,
     ChevronRight,
@@ -141,6 +180,7 @@ export default {
         <ChevronLeft class="nav-icon" />
       </button>
       <div class="calendar__header">
+        <Button variant="ghost" @click="scrollToToday" class="calendar__today-button">Today</Button>
         <h3 class="calendar__month-year">{{ currentMonthYear }}</h3>
       </div>
       <RecycleScroller
@@ -154,7 +194,7 @@ export default {
         v-slot="{ item }"
         :buffer="1000"
       >
-        <CalendarDay :day="item" :key="item.id" />
+        <CalendarDay :day="item" :key="item.id" @select="handleDayClick" />
       </RecycleScroller>
       <button class="calendar__nav calendar__nav-right" @click="scrollRight">
         <ChevronRight class="nav-icon" />
@@ -178,11 +218,16 @@ export default {
       </div>
     </div>
     <Button class="tasks__button" @click="handleAddTask()">Add Task</Button>
-    <TaskModal
-      v-if="isShowModal"
-      :taskId="taskId"
-      @close="handleCloseModal()"
-      :isEditing="!!taskId"
+    <TaskModal ref="taskModalRef" />
+    <ConfirmModal
+      v-if="isShowConfirmModal"
+      title="Delete Task"
+      message="Are you sure you want to delete this task? This action cannot be undone."
+      confirm-text="Delete"
+      cancel-text="Cancel"
+      :is-destructive="true"
+      @confirm="handleConfirmDelete"
+      @cancel="handleCancelDelete"
     />
   </div>
 </template>
@@ -191,7 +236,7 @@ export default {
 .tasks {
   max-width: var(--container-wide);
   height: 100%;
-  padding: var(--space-4xl) var(--space-lg) var(--space-3xl);
+  padding: var(--space-5xl) var(--space-lg) var(--space-3xl);
   display: flex;
   flex-direction: column;
   gap: var(--space-xl);
@@ -204,21 +249,39 @@ export default {
 }
 .calendar__header {
   position: absolute;
-  top: calc(-1 * var(--space-3xl));
+  top: calc(-1 * var(--space-4xl));
   left: 50%;
   transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: var(--container-wide);
+  justify-content: center;
+  gap: var(--space-lg);
   z-index: 1;
+}
+.calendar__today-button {
+  position: absolute;
+  top: auto;
+  left: 0;
+  padding: var(--space-sm) var(--space-md);
+}
+.calendar__today-button {
+  top: auto;
+  cursor: pointer;
 }
 
 .calendar__month-year {
   font-size: var(--font-size-xl);
   font-weight: var(--fw-semibold);
   color: var(--color-text-primary);
+  text-align: center;
+  margin: 0 auto;
 }
 
 .calendar__nav {
   position: absolute;
-  top: 50%;
+  top: calc(50% - var(--space-md) / 2);
   transform: translateY(-50%);
   z-index: 2;
   display: flex;
@@ -253,6 +316,7 @@ export default {
 }
 
 .task__calendar {
+  /* For correct work of vue-virtual-scroller*/
   height: 100px;
   overflow-x: auto;
   overflow-y: visible;

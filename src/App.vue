@@ -1,11 +1,12 @@
 <script>
-import { RouterView } from 'vue-router'
-import Header from '@/components/layout/Header.vue'
+import Header from '@/components/shared/layout/Header.vue'
+import Main from '@/components/shared/layout/Main.vue'
 import ToastContainer from '@/plugins/toast/ToastContainer.vue'
 
 export default {
   components: {
     Header,
+    Main,
     ToastContainer,
   },
 }
@@ -13,16 +14,6 @@ export default {
 
 <template>
   <Header />
-  <main class="container">
-    <RouterView />
-  </main>
+  <Main />
   <ToastContainer />
 </template>
-
-<style scoped>
-.container {
-  max-width: var(--container-wide);
-  margin: 0 auto;
-  padding: 0 var(--space-lg);
-}
-</style>

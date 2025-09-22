@@ -1,22 +1,15 @@
 <script>
-import Input from '@/components/common/Input.vue'
-import Button from '@/components/common/Button.vue'
-import { formatDateToDisplayValue, toDate } from '@/lib/utils/date'
-import Modal from '@/components/common/Modal.vue'
+import Input from '@/components/shared/ui/Input.vue'
+import Button from '@/components/shared/ui/Button.vue'
+import { formatDateToDisplayValue } from '@/lib/utils'
+import { formToTaskData } from '@/lib'
+import Modal from '@/components/shared/ui/Modal.vue'
 
 export default {
-  props: {
-    isEditing: {
-      type: Boolean,
-      default: false,
-    },
-    taskId: {
-      type: String,
-      default: null,
-    },
-  },
   data() {
     return {
+      isOpened: false,
+      taskId: null,
       title: '',
       description: '',
       date: '',
@@ -25,11 +18,32 @@ export default {
   },
   emits: ['close'],
   computed: {
+    isEditing() {
+      return this.taskId !== null
+    },
     task() {
       return this.$store.getters['tasks/taskById'](this.taskId)
     },
+    modalTitle() {
+      return this.isEditing ? 'Edit Task' : 'Add Task'
+    },
+    submitButtonText() {
+      return this.isEditing ? 'Update' : 'Save'
+    },
   },
   methods: {
+    open(taskId = null) {
+      this.taskId = taskId
+      if (this.task) {
+        Object.assign(this.$data, {
+          ...this.task,
+          date: formatDateToDisplayValue(this.task.date) || '',
+        })
+      } else if (this.$store.state.tasks.selectedDate) {
+        this.date = formatDateToDisplayValue(this.$store.state.tasks.selectedDate)
+      }
+      this.isOpened = true
+    },
     resetForm() {
       Object.assign(this.$data, {
         title: '',
@@ -38,52 +52,22 @@ export default {
         done: false,
       })
     },
-    handleClose() {
+    close() {
       this.resetForm()
-      this.$emit('close')
+      this.isOpened = false
     },
     async handleSubmit() {
-      const taskData = {
-        title: this.title.trim(),
-        description: this.description.trim(),
-        date: toDate(this.date),
-        done: this.done,
-      }
-
-      if (this.isEditing) {
-        if (!this.taskId) {
-          console.error('TaskModal: there is no taskId to update')
-          return
-        }
-
-        Object.assign(taskData, {
-          id: this.taskId,
-        })
-      }
+      const taskData = formToTaskData(this.$data, this.isEditing ? this.taskId : null)
 
       const action = this.isEditing ? 'tasks/updateTask' : 'tasks/createTask'
 
       try {
         await this.$store.dispatch(action, taskData)
-        this.handleClose()
+        this.close()
       } catch (error) {
         console.error('TaskModal/handleSubmit error:', error)
       }
     },
-  },
-
-  mounted() {
-    if (!this.isEditing && this.$store.state.tasks.selectedDate) {
-      Object.assign(this.$data, {
-        date: formatDateToDisplayValue(this.$store.state.tasks.selectedDate) || '',
-      })
-    }
-    if (this.task) {
-      Object.assign(this.$data, {
-        ...this.task,
-        date: formatDateToDisplayValue(this.task.date) || '',
-      })
-    }
   },
   components: {
     Input,
@@ -94,30 +78,45 @@ export default {
 </script>
 
 <template>
-  <Modal @close="handleClose">
+  <Modal v-if="isOpened" @close="close()">
     <template #header>
-      {{ isEditing ? 'Edit Task' : 'Add Task' }}
+      {{ modalTitle }}
     </template>
 
     <form class="modal__form" @submit.prevent="handleSubmit">
-      <Input v-model="title" type="text" label="Title" placeholder="Enter task title" required />
+      <Input
+        v-model="title"
+        type="text"
+        name="title"
+        label="Title"
+        placeholder="Enter task title"
+        required
+      />
       <Input
         v-model="description"
         type="text"
+        name="description"
         label="Description"
         placeholder="Enter task description"
         required
       />
-      <Input v-model="date" type="date" label="Date" placeholder="Enter task date" required />
+      <Input
+        v-model="date"
+        type="date"
+        name="date"
+        label="Date"
+        placeholder="Enter task date"
+        required
+      />
       <div class="modal__actions">
         <Button type="submit" class="modal__action modal__action--submit">
-          {{ isEditing ? 'Update' : 'Save' }}
+          {{ submitButtonText }}
         </Button>
         <Button
           type="button"
           variant="ghost"
           class="modal__action modal__action--cancel"
-          @click="handleClose"
+          @click="close()"
         >
           Cancel
         </Button>

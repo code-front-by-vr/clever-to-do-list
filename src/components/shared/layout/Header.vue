@@ -6,19 +6,27 @@ export default {
     RouterLink,
   },
   computed: {
+    isAuthenticated() {
+      return this.$store.getters['auth/isAuthenticated']
+    },
+    userEmail() {
+      return this.$store.state.auth.user?.email || ''
+    },
+    userInitial() {
+      return this.userEmail ? this.userEmail[0].toUpperCase() : ''
+    },
     navLinks() {
-      if (this.$store.getters['auth/isAuthenticated']) {
+      if (this.isAuthenticated) {
         return [
           { to: '/', text: 'Home' },
           { to: '/tasks', text: 'Tasks' },
         ]
-      } else {
-        return [
-          { to: '/', text: 'Home' },
-          { to: '/sign-in', text: 'Sign In' },
-          { to: '/register', text: 'Register' },
-        ]
       }
+      return [
+        { to: '/', text: 'Home' },
+        { to: '/sign-in', text: 'Sign In' },
+        { to: '/register', text: 'Register' },
+      ]
     },
   },
   methods: {
@@ -43,9 +51,15 @@ export default {
           <RouterLink :to="link.to" class="header-nav__link">{{ link.text }}</RouterLink>
         </li>
 
-        <li v-if="this.$store.getters['auth/isAuthenticated']" class="header-nav__item">
-          <button @click="handleLogout" class="header-nav__logout">Logout</button>
-        </li>
+        <template v-if="isAuthenticated" class="user-bar">
+          <li class="header-nav__item user-bar__item" :title="userEmail">
+            {{ userInitial }}
+          </li>
+
+          <li class="header-nav__item">
+            <button @click="handleLogout" class="header-nav__logout">Logout</button>
+          </li>
+        </template>
       </ul>
     </nav>
   </header>
@@ -85,10 +99,13 @@ export default {
 
 .header-nav__item,
 .header-nav__link {
-  color: var(--color-text-inverse);
+  --color-link: var(--color-text-muted-light);
+  position: relative;
+  color: var(--color-link);
   font-weight: var(--fw-medium);
   cursor: pointer;
   transition: color 0.3s ease;
+  padding-bottom: var(--space-xs);
 }
 
 .header-nav__logout {
@@ -106,14 +123,44 @@ export default {
   transition: inherit;
 }
 
-.header-nav__link:hover:not(.header-nav__logo),
-.header-nav__item:hover,
-.header-nav__item:hover .header-nav__logout {
-  color: var(--color-secondary);
+.header-nav__link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: var(--space-2xs);
+  background-color: var(--color-secondary);
+  transition: width 0.3s ease;
 }
 
-.header-nav__link.router-link-active:not(.header-nav__logo) {
-  border-bottom: 2px solid var(--color-secondary);
-  font-weight: var(--fw-semibold);
+.header-nav__link:hover::after {
+  width: 100%;
+}
+
+.header-nav__link.router-link-active::after,
+.header-nav__link.router-link-exact-active::after {
+  width: 100%;
+}
+
+.header-nav__link.router-link-active,
+.header-nav__link.router-link-exact-active {
+  --color-link: var(--color-text-inverse);
+}
+
+.user-bar__item {
+  width: var(--space-3xl);
+  height: var(--space-3xl);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--fw-bold);
+  font-size: var(--font-size-base);
+  text-transform: uppercase;
+  cursor: default;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 </style>

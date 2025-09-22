@@ -7,6 +7,7 @@ export default {
   }),
   getters: {
     isAuthenticated: state => !!state.user,
+    userId: state => state.user?.uid || null,
   },
   mutations: {
     setUser(state, user) {

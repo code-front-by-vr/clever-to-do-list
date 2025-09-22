@@ -10,14 +10,14 @@ export default {
     },
   },
   computed: {
-    tasksByDay() {
-      return this.$store.getters['tasks/tasksByDate'](this.day.date) || []
+    taskStats() {
+      return this.$store.getters['tasks/taskStatsByDate'](this.day.date)
     },
     hasPending() {
-      return this.tasksByDay.some(task => !task.done)
+      return this.taskStats.hasPending
     },
     hasDone() {
-      return this.tasksByDay.some(task => task.done)
+      return this.taskStats.hasDone
     },
     isSelected() {
       const selectedDate = this.$store.state.tasks.selectedDate
@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     handleSelectDay() {
-      this.$store.commit('tasks/setSelectedDate', this.day.date)
+      this.$store.commit('tasks/SET_SELECTED_DATE', this.day.date)
     },
   },
 }

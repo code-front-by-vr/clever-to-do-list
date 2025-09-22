@@ -96,7 +96,7 @@ export default {
         year: today.getFullYear(),
         month: today.getMonth(),
       })
-      this.$store.commit('tasks/setSelectedDate', today)
+      this.$store.commit('tasks/SET_SELECTED_DATE', today)
     } catch (error) {
       console.error('Tasks mounted error:', error)
     }

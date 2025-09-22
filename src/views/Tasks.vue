@@ -5,7 +5,7 @@ import Button from '@/components/common/Button.vue'
 import TaskModal from '@/components/task/TaskModal.vue'
 import TaskItem from '@/components/task/TaskItem.vue'
 import CalendarDay from '@/components/calendar/CalendarDay.vue'
-import { generateCalendarDays } from '@/lib/utils/date'
+import { generateCalendarDays, formatMonthYear } from '@/lib/utils/date'
 
 export default {
   data() {
@@ -14,6 +14,7 @@ export default {
       isShowModal: false,
       taskId: null,
       loadingDays: false,
+      currentMonthYear: '',
     }
   },
   computed: {
@@ -69,8 +70,19 @@ export default {
       }
     },
 
+    updateCurrentMonthYear() {
+      const scrollerEl = this.$refs.calendarScroller?.$el
+      if (!scrollerEl) return
+
+      const scrollLeft = scrollerEl.scrollLeft
+      const index = Math.floor(scrollLeft / 100)
+      const day = this.days[index]
+      if (day) this.currentMonthYear = formatMonthYear(day.date)
+    },
+
     handleScrollEnd() {
       this.fetchMoreDays()
+      this.updateCurrentMonthYear()
     },
 
     scrollLeft() {
@@ -97,9 +109,18 @@ export default {
         month: today.getMonth(),
       })
       this.$store.commit('tasks/SET_SELECTED_DATE', today)
+
+      this.currentMonthYear = formatMonthYear(today)
+
+      const scrollerEl = this.$refs.calendarScroller?.$el
+      if (scrollerEl) scrollerEl.addEventListener('scroll', this.updateCurrentMonthYear)
     } catch (error) {
       console.error('Tasks mounted error:', error)
     }
+  },
+  beforeUnmount() {
+    const scrollerEl = this.$refs.calendarScroller?.$el
+    if (scrollerEl) scrollerEl.removeEventListener('scroll', this.updateCurrentMonthYear)
   },
   components: {
     Button,
@@ -119,6 +140,9 @@ export default {
       <button class="calendar__nav calendar__nav-left" @click="scrollLeft">
         <ChevronLeft class="nav-icon" />
       </button>
+      <div class="calendar__header">
+        <h3 class="calendar__month-year">{{ currentMonthYear }}</h3>
+      </div>
       <RecycleScroller
         ref="calendarScroller"
         class="task__calendar"
@@ -167,7 +191,7 @@ export default {
 .tasks {
   max-width: var(--container-wide);
   height: 100%;
-  padding: var(--space-3xl) var(--space-lg);
+  padding: var(--space-4xl) var(--space-lg) var(--space-3xl);
   display: flex;
   flex-direction: column;
   gap: var(--space-xl);
@@ -177,6 +201,19 @@ export default {
   position: relative;
   display: flex;
   align-items: center;
+}
+.calendar__header {
+  position: absolute;
+  top: calc(-1 * var(--space-3xl));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.calendar__month-year {
+  font-size: var(--font-size-xl);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-primary);
 }
 
 .calendar__nav {
@@ -209,10 +246,10 @@ export default {
 }
 
 .calendar__nav-left {
-  left: var(--space-md);
+  left: calc(-1 * var(--space-2xl) - var(--space-sm));
 }
 .calendar__nav-right {
-  right: var(--space-md);
+  right: calc(-1 * var(--space-2xl) - var(--space-sm));
 }
 
 .task__calendar {

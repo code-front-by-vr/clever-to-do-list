@@ -30,6 +30,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 50;
 }
 
 .modal {
@@ -41,6 +42,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
+  z-index: 50;
 }
 
 .modal__title {

@@ -36,9 +36,12 @@ export default {
         @click="toggleTask()"
       />
       <Circle v-else class="task-item__icon" @click="toggleTask()" />
-      <h4 :class="['task-item__title', { 'task-item__title--done': task.done }]">
-        {{ task.title }}
-      </h4>
+      <div class="task-item__content-text">
+        <h4 :class="['task-item__title', { 'task-item__title--done': task.done }]">
+          {{ task.title }}
+        </h4>
+        <p class="task-item__descriptions">{{ task.description }}</p>
+      </div>
     </div>
 
     <div class="task-item__actions">
@@ -70,8 +73,8 @@ export default {
 }
 
 .task-item__icon {
-  width: var(--space-xl);
-  height: var(--space-xl);
+  width: var(--space-2xl);
+  height: var(--space-2xl);
   stroke-width: 2.2;
   color: var(--color-task-pending);
   vertical-align: middle;
@@ -80,6 +83,11 @@ export default {
 
 .task-item__icon--done {
   color: var(--color-task-done);
+}
+
+.task-item__content-text {
+  display: flex;
+  flex-direction: column;
 }
 
 .task-item__title {
@@ -93,6 +101,11 @@ export default {
   text-decoration: line-through;
 }
 
+.task-item__descriptions {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
 .task-item__actions {
   display: flex;
   gap: var(--space-lg);
@@ -103,8 +116,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--space-lg);
-  height: var(--space-lg);
+  width: var(--space-xl);
+  height: var(--space-xl);
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
@@ -112,8 +125,8 @@ export default {
 }
 
 .task-item__icon-action {
-  width: var(--space-lg);
-  height: var(--space-lg);
+  width: var(--space-xl);
+  height: var(--space-xl);
   stroke-width: 2;
   color: var(--color-text-secondary);
   transition: color 0.2s ease;

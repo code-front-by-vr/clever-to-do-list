@@ -24,6 +24,15 @@ export function formatDateToDisplayValue(date) {
 
 const weekdayFormatter = new Intl.DateTimeFormat('en-US', { weekday: 'short' })
 const dayFormatter = new Intl.DateTimeFormat('en-US', { day: '2-digit' })
+const monthYearFormatter = new Intl.DateTimeFormat('en-US', {
+  month: 'long',
+  year: 'numeric',
+})
+
+export function formatMonthYear(date) {
+  const formatted = monthYearFormatter.format(date)
+  return formatted.replace(' ', ', ')
+}
 
 export function generateCalendarDays(startDate = new Date(), endDate = null) {
   const start = new Date(startDate)

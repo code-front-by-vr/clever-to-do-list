@@ -205,5 +205,11 @@ export default {
         throw err
       }
     },
+    clearAllTasks({ state, commit }) {
+      commit('CLEAR_LOADED_MONTHS')
+      state.tasks = {}
+      state.days = {}
+      state.months = {}
+    },
   },
 }

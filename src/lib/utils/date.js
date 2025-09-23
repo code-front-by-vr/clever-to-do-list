@@ -1,10 +1,10 @@
 import { Timestamp } from '@/api/firebase'
 
 export function toDate(value) {
-  if (!value) return null
+  if (!value) {return null}
 
-  if (value instanceof Date) return value
-  if (value.toDate) return value.toDate()
+  if (value instanceof Date) {return value}
+  if (value.toDate) {return value.toDate()}
 
   return new Date(value)
 }
@@ -15,7 +15,7 @@ export function toTimestamp(date) {
 
 export function formatDateToDisplayValue(date) {
   const d = toDate(date)
-  if (!d) return ''
+  if (!d) {return ''}
   const yyyy = d.getFullYear()
   const mm = String(d.getMonth() + 1).padStart(2, '0')
   const dd = String(d.getDate()).padStart(2, '0')

@@ -8,6 +8,16 @@ export default {
       type: Object,
     },
   },
+  computed: {
+    taskDone: {
+      get() {
+        return this.task.done
+      },
+      set(value) {
+        this.toggleTask()
+      },
+    },
+  },
   methods: {
     handleEditTask() {
       this.$emit('edit', this.task.id)
@@ -30,7 +40,7 @@ export default {
 <template>
   <div class="task-item">
     <div class="task-item__content">
-      <Checkbox v-model="task.done" @change="toggleTask()" />
+      <Checkbox v-model="taskDone" />
       <div class="task-item__content-text">
         <h4 :class="['task-item__title', { 'task-item__title--done': task.done }]">
           {{ task.title }}

@@ -24,7 +24,7 @@ export function formToTaskData(formData, taskId = null) {
     done: formData.done,
   }
 
-  if (taskId) data.id = taskId
+  if (taskId) {data.id = taskId}
 
   return data
 }

@@ -47,7 +47,7 @@ export default {
       } catch (error) {
         this.$toast.showToast({
           title: 'Oh no!',
-          message: 'Something went wrong. Try again',
+          message: 'Something went wrong. Try again' + error,
           critical: true,
         })
       }

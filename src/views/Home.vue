@@ -1,9 +1,8 @@
 <script>
-import { RouterLink } from 'vue-router'
 import Button from '@/components/shared/ui/Button.vue'
 
 export default {
-  components: { Button, RouterLink },
+  components: { Button },
   methods: {
     goToTasks() {
       this.$router.push('/tasks')

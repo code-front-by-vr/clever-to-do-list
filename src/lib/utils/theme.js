@@ -19,8 +19,8 @@ export function getColorScheme() {
   const root = document.documentElement
   const scheme = root.style.colorScheme
 
-  if (scheme === 'light') return 'light'
-  if (scheme === 'dark') return 'dark'
+  if (scheme === 'light') {return 'light'}
+  if (scheme === 'dark') {return 'dark'}
   return 'auto'
 }
 

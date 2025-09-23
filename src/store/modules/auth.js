@@ -1,5 +1,4 @@
 import { registerUser, loginUser, logoutUser } from '@/services/auth'
-import { auth, onAuthStateChanged } from '@/api/firebase'
 
 export default {
   namespaced: true,

@@ -51,7 +51,7 @@ export default {
           <RouterLink :to="link.to" class="header-nav__link">{{ link.text }}</RouterLink>
         </li>
 
-        <template v-if="isAuthenticated" class="user-bar">
+        <template v-if="isAuthenticated">
           <li class="header-nav__item user-bar__item" :title="userEmail">
             {{ userInitial }}
           </li>

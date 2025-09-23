@@ -60,7 +60,7 @@ export default {
     },
 
     async fetchMoreDays() {
-      if (this.loadingDays) return
+      if (this.loadingDays) {return}
       this.loadingDays = true
 
       const lastDay = this.days[this.days.length - 1].date
@@ -84,12 +84,12 @@ export default {
 
     updateCurrentMonthYear() {
       const scrollerEl = this.$refs.calendarScroller?.$el
-      if (!scrollerEl) return
+      if (!scrollerEl) {return}
 
       const scrollLeft = scrollerEl.scrollLeft
       const index = Math.floor(scrollLeft / this.itemSize)
       const day = this.days[index]
-      if (day) this.currentMonthYear = formatMonthYear(day.date)
+      if (day) {this.currentMonthYear = formatMonthYear(day.date)}
     },
 
     handleDayClick(date) {
@@ -97,7 +97,7 @@ export default {
 
       const scroller = this.$refs.calendarScroller
       const index = this.days.findIndex(day => isSameDay(day.date, date))
-      if (index === -1) return
+      if (index === -1) {return}
 
       scroller.scrollToItem(index, { align: 'start' })
     },
@@ -114,13 +114,13 @@ export default {
 
     scrollLeft() {
       const scroller = this.$refs.calendarScroller?.$el
-      if (!scroller) return
+      if (!scroller) {return}
 
       scroller.scrollBy({ left: -300 })
     },
     scrollRight() {
       const scroller = this.$refs.calendarScroller?.$el
-      if (!scroller) return
+      if (!scroller) {return}
 
       scroller.scrollBy({ left: 300 })
     },
@@ -128,10 +128,10 @@ export default {
     scrollToToday() {
       this.$nextTick(() => {
         const container = this.$refs.calendarScroller?.$el
-        if (!container) return
+        if (!container) {return}
 
         const index = this.days.findIndex(day => isSameDay(day.date, this.today))
-        if (index === -1) return
+        if (index === -1) {return}
 
         const offset = index * this.itemSize
 
@@ -155,14 +155,14 @@ export default {
       this.currentMonthYear = formatMonthYear(this.today)
 
       const scrollerEl = this.$refs.calendarScroller?.$el
-      if (scrollerEl) scrollerEl.addEventListener('scroll', this.updateCurrentMonthYear)
+      if (scrollerEl) {scrollerEl.addEventListener('scroll', this.updateCurrentMonthYear)}
     } catch (error) {
       console.error('Tasks mounted error:', error)
     }
   },
   beforeUnmount() {
     const scrollerEl = this.$refs.calendarScroller?.$el
-    if (scrollerEl) scrollerEl.removeEventListener('scroll', this.updateCurrentMonthYear)
+    if (scrollerEl) {scrollerEl.removeEventListener('scroll', this.updateCurrentMonthYear)}
   },
   components: {
     Button,

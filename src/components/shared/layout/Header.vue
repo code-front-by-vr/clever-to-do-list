@@ -152,7 +152,7 @@ export default {
   width: var(--space-3xl);
   height: var(--space-3xl);
   border-radius: var(--radius-full);
-  background: var(--color-surface);
+  background: var(--color-text-muted-light);
   color: var(--color-text-primary);
   display: flex;
   align-items: center;
@@ -161,6 +161,5 @@ export default {
   font-size: var(--font-size-base);
   text-transform: uppercase;
   cursor: default;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 </style>

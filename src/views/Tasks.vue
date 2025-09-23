@@ -183,7 +183,9 @@ export default {
         <ChevronLeft class="nav-icon" />
       </button>
       <div class="calendar__header">
-        <Button variant="ghost" @click="scrollToToday" class="calendar__today-button">Today</Button>
+        <Button variant="outlined-ghost" @click="scrollToToday" class="calendar__today-button"
+          >Today</Button
+        >
         <h3 class="calendar__month-year">{{ currentMonthYear }}</h3>
       </div>
       <RecycleScroller
@@ -205,10 +207,13 @@ export default {
     </div>
 
     <div class="tasks__container" ref="tasksContainer">
-      <h2 v-if="tasksByDate.length > 0" class="tasks__title">
-        Tasks today: {{ tasksByDate.length }}
-      </h2>
-      <h2 v-else class="tasks__title">No tasks for this day</h2>
+      <div class="tasks__header">
+        <h2 v-if="tasksByDate.length > 0" class="tasks__title">
+          Tasks today: {{ tasksByDate.length }}
+        </h2>
+        <h2 v-else class="tasks__title">No tasks for this day</h2>
+        <Button class="tasks__button" @click="handleAddTask()">Add Task</Button>
+      </div>
       <div class="task__list">
         <TaskItem
           v-for="task in tasksByDate"
@@ -220,7 +225,7 @@ export default {
         />
       </div>
     </div>
-    <Button class="tasks__button" @click="handleAddTask()">Add Task</Button>
+
     <TaskModal ref="taskModalRef" />
     <ConfirmModal
       v-if="isShowConfirmModal"
@@ -243,6 +248,10 @@ export default {
   display: flex;
   flex-direction: column;
   gap: var(--space-xl);
+
+  @media (max-width: 1200px) {
+    max-width: var(--container-medium);
+  }
 }
 
 .calendar {
@@ -257,8 +266,8 @@ export default {
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  width: 100%;
   max-width: var(--container-wide);
+  width: 100%;
   justify-content: center;
   gap: var(--space-lg);
   z-index: 1;
@@ -267,11 +276,13 @@ export default {
   position: absolute;
   top: auto;
   left: 0;
-  padding: var(--space-sm) var(--space-md);
-}
-.calendar__today-button {
-  top: auto;
   cursor: pointer;
+  padding: var(--space-sm) var(--space-md);
+  transition: all 0.2s ease;
+  @media (max-width: 1024px) {
+    padding: var(--space-sm) var(--space-xl);
+    font-size: var(--font-size-md);
+  }
 }
 
 .calendar__month-year {
@@ -346,31 +357,61 @@ export default {
   background: var(--color-text-secondary);
 }
 .tasks__container {
-  padding: 0 var(--space-4xl);
+  padding: 0 var(--space-6xl);
   display: flex;
   flex-direction: column;
   flex: 1;
   gap: var(--space-xl);
+
+  @media (max-width: 1200px) {
+    padding: 0 var(--space-xl);
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 var(--space-lg);
+  }
+}
+
+.tasks__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  @media (max-width: 1024px) {
+    margin-bottom: var(--space-sm);
+  }
 }
 
 .tasks__title {
   font-size: var(--font-size-2xl);
   font-weight: var(--fw-medium);
   color: var(--color-text-primary);
+  margin: 0;
 }
 
 .task__list {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-  width: var(--container-normal);
+  max-width: var(--container-normal);
+  width: 100%;
   margin: 0 auto;
+  @media (max-width: 768px) {
+    padding: 0 var(--space-xl);
+  }
 }
 
 .tasks__button {
-  width: auto;
-  margin: 0 auto;
-  padding: var(--space-md) var(--space-6xl);
-  font-size: var(--font-size-lg);
+  padding: var(--space-sm) var(--space-2xl);
+  font-size: var(--font-size-md);
+  white-space: nowrap;
+  cursor: pointer;
+
+  @media (max-width: 768px) {
+    padding: var(--space-sm) var(--space-xl);
+    font-size: var(--font-size-md);
+    align-self: stretch;
+    justify-content: center;
+  }
 }
 </style>

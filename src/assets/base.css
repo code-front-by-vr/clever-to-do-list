@@ -39,6 +39,7 @@
   --container-narrow: 400px; /* mobile */
   --container-normal: 600px; /* small tablets */
   --container-medium: 768px; /* tablets / small desktop */
+  --container-wide-medium: 960px; /* tablets / small desktop */
   --container-wide: 1200px; /* large desktop */
   --container-xl: 1440px; /* extra large desktop */
 
@@ -75,6 +76,7 @@
   padding: 0;
   box-sizing: border-box;
 }
+
 body {
   font-display: swap;
   background-color: var(--color-bg);
@@ -88,9 +90,11 @@ textarea {
 button {
   border: 0;
 }
+
 a {
   text-decoration: none;
 }
+
 ul {
   list-style: none;
 }
@@ -99,4 +103,14 @@ ul {
   max-width: var(--container-wide);
   margin: 0 auto;
   padding: 0 var(--space-lg);
+
+  @media (max-width: 1200px) {
+    max-width: var(--container-wide-medium);
+  }
+  @media (max-width: 1024px) {
+    max-width: var(--container-medium);
+  }
+  @media (max-width: 768px) {
+    max-width: var(--container-normal);
+  }
 }

@@ -8,7 +8,7 @@ export default {
     },
     variant: {
       type: String,
-      default: 'primary', // primary | outlined | ghost | danger
+      default: 'primary', // primary | outlined | ghost | outlined-ghost | danger
     },
   },
 }
@@ -74,6 +74,20 @@ export default {
 .button--ghost:focus,
 .button--ghost:active {
   --background-color: rgba(108, 99, 255, 0.08);
+  --text-color: var(--color-primary);
+  top: calc(-1 * var(--space-2xs));
+}
+
+.button--outlined-ghost {
+  --background-color: transparent;
+  --border-color: rgba(108, 99, 255, 0.2);
+  --text-color: var(--color-primary);
+}
+.button--outlined-ghost:hover,
+.button--outlined-ghost:focus,
+.button--outlined-ghost:active {
+  --background-color: rgba(108, 99, 255, 0.08);
+  --border-color: var(--color-primary);
   --text-color: var(--color-primary);
   top: calc(-1 * var(--space-2xs));
 }

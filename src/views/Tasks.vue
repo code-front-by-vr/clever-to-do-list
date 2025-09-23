@@ -18,6 +18,7 @@ export default {
     return {
       today: new Date(),
       days: [],
+      itemSize: 100,
       taskId: null,
       loadingDays: false,
       currentMonthYear: '',
@@ -90,7 +91,7 @@ export default {
       if (!scrollerEl) return
 
       const scrollLeft = scrollerEl.scrollLeft
-      const index = Math.floor(scrollLeft / 100)
+      const index = Math.floor(scrollLeft / this.itemSize)
       const day = this.days[index]
       if (day) this.currentMonthYear = formatMonthYear(day.date)
     },
@@ -100,10 +101,9 @@ export default {
 
       const scroller = this.$refs.calendarScroller
       const index = this.days.findIndex(day => isSameDay(day.date, date))
+      if (index === -1) return
 
-      if (index !== -1) {
-        scroller.scrollToItem(index, { behavior: 'smooth' })
-      }
+      scroller.scrollToItem(index, { align: 'start' })
     },
 
     handleScrollEnd() {
@@ -113,28 +113,31 @@ export default {
 
     scrollLeft() {
       const scroller = this.$refs.calendarScroller?.$el
-      if (scroller) {
-        scroller.scrollBy({ left: -300, behavior: 'smooth' })
-      }
+      if (!scroller) return
+
+      scroller.scrollBy({ left: -300 })
     },
     scrollRight() {
       const scroller = this.$refs.calendarScroller?.$el
-      if (scroller) {
-        scroller.scrollBy({ left: 300, behavior: 'smooth' })
-      }
+      if (!scroller) return
+
+      scroller.scrollBy({ left: 300 })
     },
 
     scrollToToday() {
-      const scroller = this.$refs.calendarScroller
-      if (!scroller) return
+      this.$nextTick(() => {
+        const container = this.$refs.calendarScroller?.$el
+        if (!container) return
 
-      const todayId = formatDateToDisplayValue(this.today)
-      const index = this.days.findIndex(day => day.id === todayId)
+        const index = this.days.findIndex(day => isSameDay(day.date, this.today))
+        if (index === -1) return
 
-      if (index !== -1) {
-        scroller.scrollToItem(index, { behavior: 'smooth' })
-        this.$store.commit('tasks/SET_SELECTED_DATE', this.today)
-      }
+        const offset = index * this.itemSize
+
+        container.scrollTo({ left: offset })
+      })
+
+      this.$store.commit('tasks/SET_SELECTED_DATE', this.today)
     },
   },
   async mounted() {
@@ -188,7 +191,7 @@ export default {
         class="task__calendar"
         :items="days"
         key-field="id"
-        :item-size="100"
+        :item-size="itemSize"
         direction="horizontal"
         @scroll-end="handleScrollEnd"
         v-slot="{ item }"
@@ -201,7 +204,7 @@ export default {
       </button>
     </div>
 
-    <div class="tasks__container">
+    <div class="tasks__container" ref="tasksContainer">
       <h2 v-if="tasksByDate.length > 0" class="tasks__title">
         Tasks today: {{ tasksByDate.length }}
       </h2>
@@ -322,6 +325,7 @@ export default {
   overflow-y: visible;
   scrollbar-width: thin;
   scrollbar-color: var(--color-text-muted) transparent;
+  scroll-behavior: smooth;
 }
 
 .task__calendar::-webkit-scrollbar {

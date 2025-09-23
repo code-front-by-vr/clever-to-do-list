@@ -78,51 +78,53 @@ export default {
 </script>
 
 <template>
-  <Modal v-if="isOpened" @close="close()">
-    <template #header>
-      {{ modalTitle }}
-    </template>
+  <teleport to="#modals">
+    <Modal v-if="isOpened" @close="close()">
+      <template #header>
+        {{ modalTitle }}
+      </template>
 
-    <form class="modal__form" @submit.prevent="handleSubmit">
-      <Input
-        v-model="title"
-        type="text"
-        name="title"
-        label="Title"
-        placeholder="Enter task title"
-        required
-      />
-      <Input
-        v-model="description"
-        type="text"
-        name="description"
-        label="Description"
-        placeholder="Enter task description"
-        required
-      />
-      <Input
-        v-model="date"
-        type="date"
-        name="date"
-        label="Date"
-        placeholder="Enter task date"
-        required
-      />
-      <div class="modal__actions">
-        <Button type="submit" class="modal__action modal__action--submit">
-          {{ submitButtonText }}
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          class="modal__action modal__action--cancel"
-          @click="close()"
-        >
-          Cancel
-        </Button>
-      </div>
-    </form>
-  </Modal>
+      <form class="modal__form" @submit.prevent="handleSubmit">
+        <Input
+          v-model="title"
+          type="text"
+          name="title"
+          label="Title"
+          placeholder="Enter task title"
+          required
+        />
+        <Input
+          v-model="description"
+          type="text"
+          name="description"
+          label="Description"
+          placeholder="Enter task description"
+          required
+        />
+        <Input
+          v-model="date"
+          type="date"
+          name="date"
+          label="Date"
+          placeholder="Enter task date"
+          required
+        />
+        <div class="modal__actions">
+          <Button type="submit" class="modal__action modal__action--submit">
+            {{ submitButtonText }}
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            class="modal__action modal__action--cancel"
+            @click="close()"
+          >
+            Cancel
+          </Button>
+        </div>
+      </form>
+    </Modal>
+  </teleport>
 </template>
 
 <style scoped>

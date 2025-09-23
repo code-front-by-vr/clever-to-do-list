@@ -31,14 +31,7 @@ export default {
 
 <template>
   <div class="checkbox">
-    <input
-      type="checkbox"
-      :id
-      :name
-      class="checkbox__input"
-      :checked="modelValue"
-      @change="toggle"
-    />
+    <input type="checkbox" :id :name class="checkbox__input" v-model="value" />
     <label :for="id" class="checkbox__label"></label>
   </div>
 </template>
@@ -52,8 +45,8 @@ export default {
 .checkbox__input {
   position: absolute;
   opacity: 0;
-  width: 0;
-  height: 0;
+  width: 1px;
+  height: 1px;
 }
 .checkbox__label {
   display: inline-block;

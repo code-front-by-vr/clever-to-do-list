@@ -12,7 +12,7 @@ const app = createApp(App)
 
 app.use(ToastPlugin).use(store).use(router)
 
-store.dispatch('auth/initAuth').then(() => {
-  app.use(VueVirtualScroller)
-  app.mount('#app')
-})
+await store.dispatch('auth/initAuth')
+
+app.use(VueVirtualScroller)
+app.mount('#app')

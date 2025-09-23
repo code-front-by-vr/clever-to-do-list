@@ -42,24 +42,26 @@ export default {
 </script>
 
 <template>
-  <Modal @close="handleCancel">
-    <template #header>
-      {{ title }}
-    </template>
+  <teleport to="#modals">
+    <Modal @close="handleCancel">
+      <template #header>
+        {{ title }}
+      </template>
 
-    <p class="confirm-message">{{ message }}</p>
+      <p class="confirm-message">{{ message }}</p>
 
-    <template #footer>
-      <div class="confirm-actions">
-        <Button :variant="isDestructive ? 'danger' : 'primary'" @click="handleConfirm">
-          {{ confirmText }}
-        </Button>
-        <Button variant="ghost" @click="handleCancel">
-          {{ cancelText }}
-        </Button>
-      </div>
-    </template>
-  </Modal>
+      <template #footer>
+        <div class="confirm-actions">
+          <Button :variant="isDestructive ? 'danger' : 'primary'" @click="handleConfirm">
+            {{ confirmText }}
+          </Button>
+          <Button variant="ghost" @click="handleCancel">
+            {{ cancelText }}
+          </Button>
+        </div>
+      </template>
+    </Modal>
+  </teleport>
 </template>
 
 <style scoped>

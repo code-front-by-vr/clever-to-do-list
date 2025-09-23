@@ -42,7 +42,7 @@ export default {
 </script>
 
 <template>
-  <teleport to="#modals">
+  <Teleport to="#modals">
     <Modal @close="handleCancel">
       <template #header>
         {{ title }}
@@ -61,7 +61,7 @@ export default {
         </div>
       </template>
     </Modal>
-  </teleport>
+  </Teleport>
 </template>
 
 <style scoped>

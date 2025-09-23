@@ -24,19 +24,6 @@ export default {
     },
   },
   actions: {
-    async initAuth({ commit }) {
-      return new Promise(resolve => {
-        const unsubscribe = onAuthStateChanged(auth, user => {
-          if (user) {
-            commit('SET_USER', user)
-          } else {
-            commit('CLEAR_USER')
-          }
-          commit('SET_AUTH_READY')
-          resolve(unsubscribe)
-        })
-      })
-    },
     async register({ commit }, { email, password }) {
       try {
         const user = await registerUser(email, password)

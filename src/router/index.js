@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import store from '@/store'
+import { getCurrentUser } from '@/services/auth'
 import { ROUTES } from './routes'
 
 const router = createRouter({
@@ -7,17 +7,19 @@ const router = createRouter({
   routes: ROUTES,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 
   if (!requiresAuth) return next()
 
-  if (!store.getters['auth/isReady']) return next('/sign-in')
+  const user = await getCurrentUser()
 
-  if (store.getters['auth/isAuthenticated']) return next()
-
-  alert('You must be logged in to access this page')
-  next('/sign-in')
+  if (user) {
+    next()
+  } else {
+    alert('You must be logged in to access this page')
+    next('/sign-in')
+  }
 })
 
 export default router

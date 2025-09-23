@@ -78,7 +78,7 @@ export default {
 </script>
 
 <template>
-  <teleport to="#modals">
+  <Teleport to="#modals">
     <Modal v-if="isOpened" @close="close()">
       <template #header>
         {{ modalTitle }}
@@ -124,7 +124,7 @@ export default {
         </div>
       </form>
     </Modal>
-  </teleport>
+  </Teleport>
 </template>
 
 <style scoped>

@@ -219,5 +219,26 @@ export default {
       state.days = {}
       state.months = {}
     },
+    async movePendingTasksToNextDay({ dispatch, getters }, date) {
+      const tasks = getters.tasksByDate(date)
+      const pendingTasks = tasks.filter(task => !task.done)
+
+      if (pendingTasks.length === 0) return
+
+      const nextDayDate = new Date(date)
+      nextDayDate.setDate(nextDayDate.getDate() + 1)
+
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+
+      if (nextDayDate < today) return
+
+      for (let task of pendingTasks) {
+        await dispatch('updateTask', {
+          ...task,
+          date: nextDayDate,
+        })
+      }
+    },
   },
 }

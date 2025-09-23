@@ -6,12 +6,7 @@ import TaskModal from '@/components/task/TaskModal.vue'
 import TaskItem from '@/components/task/TaskItem.vue'
 import CalendarDay from '@/components/calendar/CalendarDay.vue'
 import ConfirmModal from '@/components/shared/ui/ConfirmModal.vue'
-import {
-  generateCalendarDays,
-  formatMonthYear,
-  formatDateToDisplayValue,
-  isSameDay,
-} from '@/lib/utils'
+import { generateCalendarDays, formatMonthYear, isSameDay } from '@/lib/utils'
 
 export default {
   data() {
@@ -29,6 +24,9 @@ export default {
   computed: {
     tasksByDate() {
       return this.$store.getters['tasks/tasksByDate'](this.$store.state.tasks.selectedDate) || []
+    },
+    taskStats() {
+      return this.$store.getters['tasks/taskStatsByDate'](this.$store.state.tasks.selectedDate)
     },
   },
   methods: {
@@ -104,6 +102,11 @@ export default {
       if (index === -1) return
 
       scroller.scrollToItem(index, { align: 'start' })
+    },
+
+    handleMovePendingTasks() {
+      const selectedDate = this.$store.state.tasks.selectedDate
+      this.$store.dispatch('tasks/movePendingTasksToNextDay', selectedDate)
     },
 
     handleScrollEnd() {
@@ -212,7 +215,17 @@ export default {
           Tasks today: {{ tasksByDate.length }}
         </h2>
         <h2 v-else class="tasks__title">No tasks for this day</h2>
-        <Button class="tasks__button" @click="handleAddTask()">Add Task</Button>
+        <div class="tasks__actions">
+          <Button
+            v-if="taskStats.hasPending"
+            class="tasks__button"
+            variant="outlined"
+            @click="handleMovePendingTasks"
+          >
+            Move to next day
+          </Button>
+          <Button class="tasks__button" @click="handleAddTask()">Add Task</Button>
+        </div>
       </div>
       <div class="task__list">
         <TaskItem
@@ -377,6 +390,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-lg);
+
   @media (max-width: 1024px) {
     margin-bottom: var(--space-sm);
   }
@@ -387,6 +401,15 @@ export default {
   font-weight: var(--fw-medium);
   color: var(--color-text-primary);
   margin: 0;
+  white-space: nowrap;
+
+  @media (max-width: 1024px) {
+    font-size: var(--font-size-xl);
+  }
+
+  @media (max-width: 768px) {
+    font-size: var(--font-size-lg);
+  }
 }
 
 .task__list {
@@ -396,9 +419,16 @@ export default {
   max-width: var(--container-normal);
   width: 100%;
   margin: 0 auto;
+
   @media (max-width: 768px) {
     padding: 0 var(--space-xl);
   }
+}
+
+.tasks__actions {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
 }
 
 .tasks__button {

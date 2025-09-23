@@ -87,8 +87,10 @@ export default {
 .input__field {
   width: 100%;
   padding: var(--space-md);
-  border: var(--border-transparent);
-  border-bottom: var(--border-thin) var(--color-text-muted);
+  border: var(--border-thin) var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
   font-size: var(--font-size-base);
   transition: all 0.3s ease;
 }
@@ -96,7 +98,6 @@ export default {
 .input__field:focus-visible {
   outline: none;
   border: var(--border-thin) var(--color-primary);
-  border-radius: var(--radius-md);
   box-shadow: 0 0 0 3px var(--shadow-primary);
 }
 

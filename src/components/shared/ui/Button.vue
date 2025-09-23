@@ -38,6 +38,7 @@ export default {
   border: var(--border-thin-2) var(--border-color);
   color: var(--text-color);
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 .button--primary {
   --background-color: var(--color-primary);
@@ -73,20 +74,20 @@ export default {
 .button--ghost:hover,
 .button--ghost:focus,
 .button--ghost:active {
-  --background-color: rgba(108, 99, 255, 0.08);
+  --background-color: var(--color-surface-hover);
   --text-color: var(--color-primary);
   top: calc(-1 * var(--space-2xs));
 }
 
 .button--outlined-ghost {
   --background-color: transparent;
-  --border-color: rgba(108, 99, 255, 0.2);
+  --border-color: var(--color-border);
   --text-color: var(--color-primary);
 }
 .button--outlined-ghost:hover,
 .button--outlined-ghost:focus,
 .button--outlined-ghost:active {
-  --background-color: rgba(108, 99, 255, 0.08);
+  --background-color: var(--color-surface-hover);
   --border-color: var(--color-primary);
   --text-color: var(--color-primary);
   top: calc(-1 * var(--space-2xs));

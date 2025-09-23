@@ -52,9 +52,9 @@ export default {
   display: inline-block;
   width: var(--space-2xl);
   height: var(--space-2xl);
-  border: var(--border-thin-2) var(--color-task-pending);
+  border: var(--border-thin-2) var(--color-border);
   border-radius: var(--radius-sm);
-  background-color: transparent;
+  background-color: var(--color-surface);
   cursor: pointer;
   position: relative;
   transition: all 0.2s ease;
@@ -67,7 +67,7 @@ export default {
   top: 50%;
   width: var(--space-sm);
   height: var(--space-lg);
-  border: solid white;
+  border: solid var(--color-text-inverse);
   border-width: 0 2px 2px 0;
   transform: translate(-50%, -70%) rotate(45deg) scale(0);
   opacity: 0;

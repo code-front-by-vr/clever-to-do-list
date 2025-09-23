@@ -1,39 +1,58 @@
 @import './fonts.css';
 
 :root {
+  color-scheme: light dark;
+
   /* Brand colors */
-  --color-primary: #6c63ff; /*  main accent */
-  --color-secondary: #00cfff; /* secondary accent */
+  --color-primary: light-dark(#6c63ff, #58a6ff); /* main accent  */
+  --color-secondary: light-dark(#00cfff, #79c0ff); /* secondary accent  */
 
   /* Backgrounds */
-  --color-bg: #f7f7f7; /* background */
-  --color-surface: #ffffff; /* cards, blocks on background */
-  --color-gradient: linear-gradient(135deg, var(--color-bg) 0%, #e8e8ff 100%);
+  --color-bg: light-dark(#f7f7f7, #0d1117); /* main background */
+  --color-surface: light-dark(#ffffff, #161b22); /* cards, blocks on background */
+  --color-surface-hover: light-dark(#f8f9fa, #21262d); /* hover states for surfaces */
+  --color-gradient: light-dark(
+    linear-gradient(135deg, #f7f7f7 0%, #e8e8ff 100%),
+    linear-gradient(135deg, #0d1117 0%, #161b22 100%)
+  );
 
-  /* Text */
-  --color-text-primary: #2e2e3a; /* headings, main text */
-  --color-text-secondary: #78818e; /* descriptions, subheadings */
-  --color-text-muted: #a9b2bd; /* dates, placeholders */
-  --color-text-muted-light: #d0d4dd;
-  --color-text-inverse: #ffffff; /* text on dark or accent background */
+  /* Text colors */
+  --color-text-primary: light-dark(#2e2e3a, #f0f6fc); /* headings, main text */
+  --color-text-secondary: light-dark(#78818e, #8b949e); /* descriptions, subheadings */
+  --color-text-muted: light-dark(#a9b2bd, #6e7681); /* dates, placeholders */
+  --color-text-muted-light: light-dark(#d0d4dd, #484f58);
+  --color-text-inverse: light-dark(#ffffff, #0d1117); /* text on accent background */
 
   /* Task status */
-  --color-task-done: #22c55e; /* completed tasks */
+  --color-task-done: light-dark(#22c55e, #3fb950); /* completed tasks */
   --color-task-pending: var(--color-primary); /* pending tasks */
 
-  /* System / feedback */
-  --color-accent-warning: #ff6b35; /* errors, toasts */
-  --color-accent-warning-rgb: 255, 107, 53;
-  --color-accent-error: #dc2626; /* more severe errors, danger actions */
-  --color-task-done-rgb: 34, 197, 94;
+  /* System / feedback colors */
+  --color-accent-warning: light-dark(#ff6b35, #f85149); /* warnings, errors */
+  --color-accent-warning-rgb: light-dark(255 107 53, 248 81 73);
+  --color-accent-error: light-dark(#dc2626, #da3633); /* severe errors, danger actions */
+  --color-task-done-rgb: light-dark(34 197 94, 63 185 80);
 
-  /* Shadows */
-  --shadow-primary: rgba(108, 99, 255, 0.3);
-  --shadow-primary-hover: rgba(108, 99, 255, 0.45);
-  --shadow-button-primary-hover: 0 8px 20px var(--shadow-primary-hover);
+  /* Borders */
+  --color-border: light-dark(#e1e4e8, #30363d); /* default borders */
+  --color-border-muted: light-dark(#f0f0f0, #21262d); /* subtle borders */
+
+  /* Shadows - adjusted for dark theme */
+  --shadow-primary: light-dark(rgba(108, 99, 255, 0.3), rgba(88, 166, 255, 0.4));
+  --shadow-primary-hover: light-dark(rgba(108, 99, 255, 0.45), rgba(88, 166, 255, 0.6));
+  --shadow-button-primary-hover: light-dark(
+    0 8px 20px rgba(108, 99, 255, 0.45),
+    0 8px 20px rgba(88, 166, 255, 0.6)
+  );
+  --shadow-surface: light-dark(0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.5));
+  --shadow-modal-backdrop: light-dark(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7));
+  --shadow-modal: light-dark(0 8px 24px rgba(0, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.4));
 
   /* Gradients */
-  --gradient-primary: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  --gradient-primary: light-dark(
+    linear-gradient(90deg, #6c63ff 0%, #00cfff 100%),
+    linear-gradient(90deg, #58a6ff 0%, #79c0ff 100%)
+  );
 
   /* Layout */
   --container-narrow: 400px; /* mobile */

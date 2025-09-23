@@ -58,7 +58,8 @@ export default {
   padding: var(--space-md) var(--space-xl);
   border-radius: var(--radius-md);
   background-color: var(--color-surface);
-  box-shadow: var(--shadow-primary);
+  box-shadow: var(--shadow-surface);
+  border: var(--border-thin-1) var(--color-border-muted);
 
   @media (max-width: 1200px) {
     padding: var(--space-sm) var(--space-lg);

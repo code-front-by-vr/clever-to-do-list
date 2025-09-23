@@ -41,7 +41,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--shadow-modal-backdrop);
   backdrop-filter: blur(var(--space-xs));
   display: flex;
   justify-content: center;
@@ -54,7 +54,8 @@ export default {
   padding: var(--space-3xl);
   background-color: var(--color-surface);
   border-radius: var(--radius-xl);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-modal);
+  border: var(--border-thin-1) var(--color-border);
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);

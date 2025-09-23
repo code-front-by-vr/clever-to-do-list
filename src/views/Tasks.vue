@@ -303,10 +303,10 @@ export default {
   justify-content: center;
   width: var(--space-2xl);
   height: var(--space-2xl);
-  border: none;
+  border: var(--border-thin-1) var(--color-border);
   border-radius: var(--radius-rounded);
-  background: var(--color-gradient);
-  opacity: 0.8;
+  background: var(--color-surface);
+  opacity: 0.9;
   color: var(--color-text-secondary);
   cursor: pointer;
   transition:
@@ -405,7 +405,6 @@ export default {
   padding: var(--space-sm) var(--space-2xl);
   font-size: var(--font-size-md);
   white-space: nowrap;
-  cursor: pointer;
 
   @media (max-width: 768px) {
     padding: var(--space-sm) var(--space-xl);

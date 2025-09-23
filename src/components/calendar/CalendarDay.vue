@@ -63,15 +63,17 @@ export default {
   background-color: var(--color-surface);
   border: var(--border-thin-2) var(--_border-color);
   border-radius: var(--radius-md);
+  box-shadow: var(--shadow-surface);
   transition: all 0.3s ease;
 
   --calendar-day-outline-color: var(--color-primary);
   outline-color: var(--calendar-day-outline-color) !important;
+  cursor: pointer;
 }
 
 .calendar__day:hover {
   background: var(--color-gradient);
-  --border-color: var(--color-text-muted);
+  --border-color: var(--color-border);
   box-shadow: 0 var(--space-xs) var(--space-sm) var(--shadow-primary);
 }
 

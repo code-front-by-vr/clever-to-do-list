@@ -4,6 +4,7 @@ import Button from '@/components/shared/ui/Button.vue'
 
 export default {
   name: 'ConfirmModal',
+  emits: ['confirm', 'cancel'],
   props: {
     title: {
       type: String,
@@ -26,12 +27,24 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      isOpened: false,
+    }
+  },
   methods: {
+    open() {
+      this.isOpened = true
+    },
+    close() {
+      this.isOpened = false
+    },
     handleConfirm() {
       this.$emit('confirm')
     },
     handleCancel() {
       this.$emit('cancel')
+      this.close()
     },
   },
   components: {
@@ -42,26 +55,24 @@ export default {
 </script>
 
 <template>
-  <Teleport to="#modals">
-    <Modal @close="handleCancel">
-      <template #header>
-        {{ title }}
-      </template>
+  <Modal v-if="isOpened" @close="handleCancel">
+    <template #header>
+      {{ title }}
+    </template>
 
-      <p class="confirm-message">{{ message }}</p>
+    <p class="confirm-message">{{ message }}</p>
 
-      <template #footer>
-        <div class="confirm-actions">
-          <Button :variant="isDestructive ? 'danger' : 'primary'" @click="handleConfirm">
-            {{ confirmText }}
-          </Button>
-          <Button variant="ghost" @click="handleCancel">
-            {{ cancelText }}
-          </Button>
-        </div>
-      </template>
-    </Modal>
-  </Teleport>
+    <template #footer>
+      <div class="confirm-actions">
+        <Button :variant="isDestructive ? 'danger' : 'primary'" @click="handleConfirm">
+          {{ confirmText }}
+        </Button>
+        <Button variant="ghost" @click="handleCancel">
+          {{ cancelText }}
+        </Button>
+      </div>
+    </template>
+  </Modal>
 </template>
 
 <style scoped>

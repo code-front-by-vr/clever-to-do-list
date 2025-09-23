@@ -20,18 +20,20 @@ export default {
 </script>
 
 <template>
-  <div class="modal-backdrop" @click.self="$emit('close')">
-    <div class="modal">
-      <div class="modal__title">
-        <slot name="header" />
-      </div>
-      <div class="modal__content">
-        <slot />
-      </div>
+  <Teleport to="#modals">
+    <div class="modal-backdrop" @click.self="$emit('close')">
+      <div class="modal">
+        <div class="modal__title">
+          <slot name="header" />
+        </div>
+        <div class="modal__content">
+          <slot />
+        </div>
 
-      <slot name="footer" />
+        <slot name="footer" />
+      </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <style scoped>

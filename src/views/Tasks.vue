@@ -17,7 +17,6 @@ export default {
       taskId: null,
       loadingDays: false,
       currentMonthYear: '',
-      isShowConfirmModal: false,
       taskToDelete: null,
     }
   },
@@ -42,18 +41,17 @@ export default {
         return
       }
       this.taskToDelete = { date, taskId }
-      this.isShowConfirmModal = true
+      this.$refs.confirmModalRef.open()
     },
     handleConfirmDelete() {
       if (this.taskToDelete) {
         this.$store.dispatch('tasks/deleteTask', this.taskToDelete)
         this.taskToDelete = null
+        this.$refs.confirmModalRef.close()
       }
-      this.isShowConfirmModal = false
     },
     handleCancelDelete() {
       this.taskToDelete = null
-      this.isShowConfirmModal = false
     },
     handleToggleTask(taskId) {
       const task = this.$store.getters['tasks/taskById'](taskId)
@@ -241,7 +239,7 @@ export default {
 
     <TaskModal ref="taskModalRef" />
     <ConfirmModal
-      v-if="isShowConfirmModal"
+      ref="confirmModalRef"
       title="Delete Task"
       message="Are you sure you want to delete this task? This action cannot be undone."
       confirm-text="Delete"

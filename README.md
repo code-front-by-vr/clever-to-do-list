@@ -1,8 +1,10 @@
 # Clever To-Do List
 
+🚀 **Live Demo**: [https://clever-to-do-list.vercel.app/](https://clever-to-do-list.vercel.app/)
+
 ## Task
 
-[https://drive.google.com/file/d/18I1PxOxZn2lwm__YeOtMNoWeiXygKwwN/view]
+📋 **Task Description**: [View on Google Drive](https://drive.google.com/file/d/18I1PxOxZn2lwm__YeOtMNoWeiXygKwwN/view)
 
 ## How to run the app
 

@@ -1,9 +1,18 @@
 import { addTask, deleteTask, updateTask, getTasksByDateRange } from '@/services/task'
-import { formatDateToDisplayValue } from '@/lib/utils'
-import { requireUserId } from '@/services/auth'
+import { formatDateToDisplayValue, formatDateToMonthKey } from '@/lib/utils'
+import { requiresUserId } from '@/services/auth'
 
-function getTaskToDayInitialState(date) {
+function createDayInitialState(date) {
   return { date, taskIds: [] }
+}
+
+function createMonthInitialState(monthKey) {
+  const [year, month] = monthKey.split('-')
+  return {
+    year: parseInt(year),
+    month: parseInt(month),
+    dayKeys: [],
+  }
 }
 
 export default {
@@ -24,9 +33,11 @@ export default {
     tasksByDate: state => date => {
       const displayDate = formatDateToDisplayValue(date)
       const day = state.days[displayDate]
-      if (!day) {return []}
+      if (!day) {
+        return []
+      }
 
-      return day.taskIds.map(taskId => state.tasks[taskId]).filter(task => !!task)
+      return day.taskIds.map(taskId => state.tasks[taskId]).filter(Boolean)
     },
 
     daysInMonth: state => monthKey => {
@@ -34,21 +45,31 @@ export default {
       return month ? month.dayKeys : []
     },
 
-    hasTasksOnDate: state => date => {
+    hasTasksForSpecifiedDate: state => date => {
       const dayKey = formatDateToDisplayValue(date)
       const day = state.days[dayKey]
       return day && day.taskIds.length > 0
     },
 
-    taskStatsByDate: (state, getters) => date => {
+    completedTasksByDate: (state, getters) => date => {
       const tasks = getters.tasksByDate(date)
-      const uncompletedTasks = tasks.filter(task => !task.done)
+      return tasks.filter(task => task.done)
+    },
+
+    uncompletedTasksByDate: (state, getters) => date => {
+      const tasks = getters.tasksByDate(date)
+      return tasks.filter(task => !task.done)
+    },
+
+    taskStatsByDate: (state, getters) => date => {
+      const completedTasks = getters.completedTasksByDate(date)
+      const uncompletedTasks = getters.uncompletedTasksByDate(date)
 
       const uncompletedTasksCount = uncompletedTasks.length
-      const completedTasksCount = tasks.length - uncompletedTasksCount
+      const completedTasksCount = completedTasks.length
       const hasPending = uncompletedTasksCount > 0
       const hasDone = completedTasksCount > 0
-      const total = tasks.length
+      const total = completedTasksCount + uncompletedTasksCount
 
       return {
         total,
@@ -70,7 +91,10 @@ export default {
     },
 
     ADD_TASK_TO_DATE(state, { dayKey, taskId }) {
-      if (!state.days[dayKey]) {state.days[dayKey] = getTaskToDayInitialState(dayKey)}
+      if (!state.days[dayKey]) {
+        state.days[dayKey] = createDayInitialState(dayKey)
+      }
+
       if (!state.days[dayKey].taskIds.includes(taskId)) {
         state.days[dayKey].taskIds.push(taskId)
       }
@@ -78,16 +102,19 @@ export default {
     REMOVE_TASK_FROM_DAY(state, { dayKey, taskId }) {
       const day = state.days[dayKey]
 
-      if (!day) {return}
+      if (!day) {
+        return
+      }
 
       day.taskIds = day.taskIds.filter(id => id !== taskId)
-      if (day.taskIds.length === 0) {delete state.days[dayKey]}
+      if (day.taskIds.length === 0) {
+        delete state.days[dayKey]
+      }
     },
 
     ADD_DAY_TO_MONTH(state, { monthKey, dayKey }) {
       if (!state.months[monthKey]) {
-        const [year, month] = dayKey.split('-')
-        state.months[monthKey] = { year: parseInt(year), month: parseInt(month), dayKeys: [] }
+        state.months[monthKey] = createMonthInitialState(monthKey)
       }
       if (!state.months[monthKey].dayKeys.includes(dayKey)) {
         state.months[monthKey].dayKeys.push(dayKey)
@@ -103,27 +130,26 @@ export default {
           delete state.days[dayKey]
         })
       }
-      const dayKeys = new Set()
+      const dayKeys = []
       tasks.forEach(task => {
         const dayKey = formatDateToDisplayValue(task.date)
-        dayKeys.add(dayKey)
+        if (!dayKeys.includes(dayKey)) {
+          dayKeys.push(dayKey)
+        }
 
         state.tasks[task.id] = task
 
         if (!state.days[dayKey]) {
-          state.days[dayKey] = getTaskToDayInitialState(dayKey)
+          state.days[dayKey] = createDayInitialState(dayKey)
         }
         if (!state.days[dayKey].taskIds.includes(task.id)) {
           state.days[dayKey].taskIds.push(task.id)
         }
       })
 
-      const [year, month] = monthKey.split('-')
-
       state.months[monthKey] = {
-        year: parseInt(year),
-        month: parseInt(month),
-        dayKeys: Array.from(dayKeys),
+        ...createMonthInitialState(monthKey),
+        dayKeys,
       }
     },
 
@@ -140,14 +166,15 @@ export default {
   actions: {
     async fetchTasksForTheMonth({ state, commit, rootState }, { year, month }) {
       try {
-        const userId = requireUserId(rootState.auth.user)
-
-        const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`
-        if (state.loadedMonths.has(monthKey)) {return}
+        const userId = requiresUserId(rootState.auth.user)
 
         const startDate = new Date(year, month, 1)
         const endDate = new Date(year, month + 1, 0)
         endDate.setHours(23, 59, 59, 999)
+
+        const monthKey = formatDateToMonthKey(startDate)
+
+        if (state.loadedMonths.has(monthKey)) return
 
         const tasks = await getTasksByDateRange(userId, startDate, endDate)
 
@@ -160,17 +187,14 @@ export default {
     },
     async createTask({ commit, rootState }, task) {
       try {
-        const userId = requireUserId(rootState.auth.user)
+        const userId = requiresUserId(rootState.auth.user)
 
         const taskData = await addTask(userId, task)
         const dayKey = formatDateToDisplayValue(taskData.date)
+        const monthKey = formatDateToMonthKey(taskData.date)
 
         commit('SET_TASK', taskData)
         commit('ADD_TASK_TO_DATE', { dayKey, taskId: taskData.id })
-
-        const dateObj = new Date(taskData.date)
-        const monthKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`
-
         commit('ADD_DAY_TO_MONTH', { monthKey, dayKey })
       } catch (err) {
         console.error('Tasks/createTask error:', err)
@@ -179,7 +203,7 @@ export default {
     },
     async deleteTask({ commit, rootState }, { date, taskId }) {
       try {
-        const userId = requireUserId(rootState.auth.user)
+        const userId = requiresUserId(rootState.auth.user)
 
         await deleteTask(userId, taskId)
 
@@ -193,7 +217,7 @@ export default {
     },
     async updateTask({ commit, rootState, state }, task) {
       try {
-        const userId = requireUserId(rootState.auth.user)
+        const userId = requiresUserId(rootState.auth.user)
 
         const updatedTask = await updateTask(userId, task)
         const oldTask = state.tasks[task.id]
@@ -202,28 +226,25 @@ export default {
           const oldDayKey = formatDateToDisplayValue(oldTask.date)
           const newDayKey = formatDateToDisplayValue(updatedTask.date)
 
-          if (oldDayKey === newDayKey) {return}
-
-          commit('REMOVE_TASK_FROM_DAY', { dayKey: oldDayKey, taskId: task.id })
-          commit('ADD_TASK_TO_DATE', { dayKey: newDayKey, taskId: task.id })
+          if (oldDayKey !== newDayKey) {
+            commit('REMOVE_TASK_FROM_DAY', { dayKey: oldDayKey, taskId: task.id })
+            commit('ADD_TASK_TO_DATE', { dayKey: newDayKey, taskId: task.id })
+          }
         }
+
         commit('SET_TASK', updatedTask)
       } catch (err) {
         console.error('Tasks/updateTask error:', err)
         throw err
       }
     },
-    clearAllTasks({ state, commit }) {
-      commit('CLEAR_LOADED_MONTHS')
-      state.tasks = {}
-      state.days = {}
-      state.months = {}
-    },
     async movePendingTasksToNextDay({ dispatch, getters }, date) {
       const tasks = getters.tasksByDate(date)
       const pendingTasks = tasks.filter(task => !task.done)
 
-      if (pendingTasks.length === 0) {return}
+      if (pendingTasks.length === 0) {
+        return
+      }
 
       const nextDayDate = new Date(date)
       nextDayDate.setDate(nextDayDate.getDate() + 1)
@@ -231,9 +252,11 @@ export default {
       const today = new Date()
       today.setHours(0, 0, 0, 0)
 
-      if (nextDayDate < today) {return}
+      if (nextDayDate < today) {
+        return
+      }
 
-      for (let task of pendingTasks) {
+      for (const task of pendingTasks) {
         await dispatch('updateTask', {
           ...task,
           date: nextDayDate,

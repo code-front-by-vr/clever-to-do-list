@@ -1,7 +1,6 @@
 <script>
-import Header from '@/components/shared/layout/Header.vue'
-import Main from '@/components/shared/layout/Main.vue'
-import ToastContainer from '@/plugins/toast/ToastContainer.vue'
+import { Header, Main } from '@/components/shared/layout'
+import { ToastContainer } from '@/plugins/toast'
 
 export default {
   components: {

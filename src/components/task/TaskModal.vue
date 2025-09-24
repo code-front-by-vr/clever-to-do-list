@@ -32,7 +32,7 @@ export default {
     },
   },
   methods: {
-    open(taskId = null) {
+    async open(taskId = null) {
       this.taskId = taskId
       if (this.task) {
         Object.assign(this.$data, {
@@ -43,6 +43,9 @@ export default {
         this.date = formatDateToDisplayValue(this.$store.state.tasks.selectedDate)
       }
       this.isOpened = true
+
+      await this.$nextTick()
+      this.$refs.firstInput?.focus()
     },
     resetForm() {
       Object.assign(this.$data, {
@@ -69,6 +72,7 @@ export default {
       }
     },
   },
+  expose: ['open', 'close'],
   components: {
     Input,
     Button,
@@ -85,6 +89,7 @@ export default {
 
     <form class="modal__form" @submit.prevent="handleSubmit">
       <Input
+        ref="firstInput"
         v-model="title"
         type="text"
         name="title"

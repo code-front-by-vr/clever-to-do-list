@@ -23,7 +23,7 @@ export default {
   <Teleport to="#modals">
     <div class="modal-backdrop" @click.self="$emit('close')">
       <div class="modal">
-        <div class="modal__title">
+        <div class="modal__title typography-heading">
           <slot name="header" />
         </div>
         <div class="modal__content">
@@ -70,8 +70,6 @@ export default {
   color: var(--color-primary);
   margin-bottom: var(--space-md);
   text-align: center;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
 }
 
 .modal__content {

@@ -4,12 +4,10 @@ export default {
   namespaced: true,
   state: () => ({
     user: null,
-    isReady: false,
   }),
   getters: {
     isAuthenticated: state => !!state.user,
     userId: state => state.user?.uid || null,
-    isReady: state => state.isReady,
   },
   mutations: {
     SET_USER(state, user) {
@@ -17,9 +15,6 @@ export default {
     },
     CLEAR_USER(state) {
       state.user = null
-    },
-    SET_AUTH_READY(state) {
-      state.isReady = true
     },
   },
   actions: {

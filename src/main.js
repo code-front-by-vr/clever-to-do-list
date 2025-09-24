@@ -8,6 +8,9 @@ import store from '@/store'
 import ToastPlugin from '@/plugins/toast/toast'
 import VueVirtualScroller from 'vue-virtual-scroller'
 import { onAuthStateChanged, auth } from '@/api/firebase'
+import { initializeTheme } from '@/lib/utils'
+
+initializeTheme()
 
 const app = createApp(App)
 

@@ -1,19 +1,20 @@
 <script>
 import { RecycleScroller } from 'vue-virtual-scroller'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
-import Button from '@/components/shared/ui/Button.vue'
+import { Button, ConfirmModal } from '@/components/shared/ui'
 import TaskModal from '@/components/task/TaskModal.vue'
 import TaskItem from '@/components/task/TaskItem.vue'
 import CalendarDay from '@/components/calendar/CalendarDay.vue'
-import ConfirmModal from '@/components/shared/ui/ConfirmModal.vue'
-import { generateCalendarDays, formatMonthYear, isSameDay } from '@/lib/utils'
+import { generateCalendarDays, formatMonthYear, isSameDay, throttle } from '@/lib/utils'
+
+const CALENDAR_ITEM_SIZE = 100
 
 export default {
   data() {
     return {
       today: new Date(),
       days: [],
-      itemSize: 100,
+      itemSize: CALENDAR_ITEM_SIZE,
       taskId: null,
       loadingDays: false,
       currentMonthYear: '',
@@ -60,7 +61,9 @@ export default {
     },
 
     async fetchMoreDays() {
-      if (this.loadingDays) {return}
+      if (this.loadingDays) {
+        return
+      }
       this.loadingDays = true
 
       const lastDay = this.days[this.days.length - 1].date
@@ -82,22 +85,28 @@ export default {
       }
     },
 
-    updateCurrentMonthYear() {
+    updateCurrentMonthYear: throttle(function () {
       const scrollerEl = this.$refs.calendarScroller?.$el
-      if (!scrollerEl) {return}
+      if (!scrollerEl) {
+        return
+      }
 
       const scrollLeft = scrollerEl.scrollLeft
       const index = Math.floor(scrollLeft / this.itemSize)
       const day = this.days[index]
-      if (day) {this.currentMonthYear = formatMonthYear(day.date)}
-    },
+      if (day) {
+        this.currentMonthYear = formatMonthYear(day.date)
+      }
+    }, 60),
 
     handleDayClick(date) {
       this.$store.commit('tasks/SET_SELECTED_DATE', date)
 
       const scroller = this.$refs.calendarScroller
       const index = this.days.findIndex(day => isSameDay(day.date, date))
-      if (index === -1) {return}
+      if (index === -1) {
+        return
+      }
 
       scroller.scrollToItem(index, { align: 'start' })
     },
@@ -114,24 +123,32 @@ export default {
 
     scrollLeft() {
       const scroller = this.$refs.calendarScroller?.$el
-      if (!scroller) {return}
+      if (!scroller) {
+        return
+      }
 
-      scroller.scrollBy({ left: -300 })
+      scroller.scrollBy({ left: -3 * CALENDAR_ITEM_SIZE })
     },
     scrollRight() {
       const scroller = this.$refs.calendarScroller?.$el
-      if (!scroller) {return}
+      if (!scroller) {
+        return
+      }
 
-      scroller.scrollBy({ left: 300 })
+      scroller.scrollBy({ left: 3 * CALENDAR_ITEM_SIZE })
     },
 
     scrollToToday() {
       this.$nextTick(() => {
         const container = this.$refs.calendarScroller?.$el
-        if (!container) {return}
+        if (!container) {
+          return
+        }
 
         const index = this.days.findIndex(day => isSameDay(day.date, this.today))
-        if (index === -1) {return}
+        if (index === -1) {
+          return
+        }
 
         const offset = index * this.itemSize
 
@@ -155,14 +172,18 @@ export default {
       this.currentMonthYear = formatMonthYear(this.today)
 
       const scrollerEl = this.$refs.calendarScroller?.$el
-      if (scrollerEl) {scrollerEl.addEventListener('scroll', this.updateCurrentMonthYear)}
+      if (scrollerEl) {
+        scrollerEl.addEventListener('scroll', this.updateCurrentMonthYear)
+      }
     } catch (error) {
       console.error('Tasks mounted error:', error)
     }
   },
   beforeUnmount() {
     const scrollerEl = this.$refs.calendarScroller?.$el
-    if (scrollerEl) {scrollerEl.removeEventListener('scroll', this.updateCurrentMonthYear)}
+    if (scrollerEl) {
+      scrollerEl.removeEventListener('scroll', this.updateCurrentMonthYear)
+    }
   },
   components: {
     Button,
@@ -212,7 +233,7 @@ export default {
         <h2 v-if="tasksByDate.length > 0" class="tasks__title">
           Tasks today: {{ tasksByDate.length }}
         </h2>
-        <h2 v-else class="tasks__title">No tasks for this day</h2>
+        <h2 v-else class="tasks__title">No tasks</h2>
         <div class="tasks__actions">
           <Button
             v-if="taskStats.hasPending"
@@ -220,7 +241,7 @@ export default {
             variant="outlined"
             @click="handleMovePendingTasks"
           >
-            Move to next day
+            Move uncompleted tasks to the next day
           </Button>
           <Button class="tasks__button" @click="handleAddTask()">Add Task</Button>
         </div>
@@ -229,10 +250,10 @@ export default {
         <TaskItem
           v-for="task in tasksByDate"
           :key="task.id"
-          :task="task"
-          @edit="handleEditTask"
-          @delete="handleDeleteTask"
-          @toggle="handleToggleTask"
+          v-bind="task"
+          @edit="() => handleEditTask(task.id)"
+          @delete="() => handleDeleteTask({ date: task.date, taskId: task.id })"
+          @toggle="() => handleToggleTask(task.id)"
         />
       </div>
     </div>
@@ -285,11 +306,9 @@ export default {
 }
 .calendar__today-button {
   position: absolute;
-  top: auto;
   left: 0;
   cursor: pointer;
   padding: var(--space-sm) var(--space-md);
-  transition: all 0.2s ease;
   @media (max-width: 1024px) {
     padding: var(--space-sm) var(--space-xl);
     font-size: var(--font-size-md);
@@ -372,14 +391,16 @@ export default {
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: var(--space-xl);
+  gap: var(--space-4xl);
 
   @media (max-width: 1200px) {
     padding: 0 var(--space-xl);
+    gap: var(--space-2xl);
   }
 
   @media (max-width: 768px) {
     padding: 0 var(--space-lg);
+    gap: var(--space-xl);
   }
 }
 
@@ -427,6 +448,10 @@ export default {
   display: flex;
   gap: var(--space-md);
   align-items: center;
+
+  @media (max-width: 1024px) {
+    gap: var(--space-sm);
+  }
 }
 
 .tasks__button {
@@ -434,11 +459,10 @@ export default {
   font-size: var(--font-size-md);
   white-space: nowrap;
 
-  @media (max-width: 768px) {
-    padding: var(--space-sm) var(--space-xl);
-    font-size: var(--font-size-md);
-    align-self: stretch;
-    justify-content: center;
+  @media (max-width: 1024px) {
+    padding: var(--space-sm) var(--space-lg);
+    font-size: var(--font-size-sm);
+    flex-shrink: 0;
   }
 }
 </style>

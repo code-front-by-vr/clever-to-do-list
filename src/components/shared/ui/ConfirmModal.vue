@@ -47,6 +47,7 @@ export default {
       this.close()
     },
   },
+  expose: ['open', 'close'],
   components: {
     Modal,
     Button,

@@ -40,6 +40,11 @@ export default {
       },
     },
   },
+  methods: {
+    focus() {
+      this.$refs.input?.focus()
+    },
+  },
 }
 </script>
 
@@ -48,6 +53,7 @@ export default {
     <label class="input__label" :for="id">{{ label }}</label>
     <div class="input__wrapper">
       <input
+        ref="input"
         :id
         :name
         class="input__field"
@@ -57,8 +63,8 @@ export default {
         :required
         :aria-label="label"
       />
-      <div class="input__icon" v-if="$slots['show-password-toggle']">
-        <slot name="show-password-toggle" />
+      <div class="input__icon" v-if="$slots['icon']">
+        <slot name="icon" />
       </div>
     </div>
   </div>

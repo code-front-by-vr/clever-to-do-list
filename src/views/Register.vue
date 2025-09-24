@@ -1,8 +1,7 @@
 <script>
 import { registerUser } from '@/services/auth'
 import { RouterLink } from 'vue-router'
-import Button from '@/components/shared/ui/Button.vue'
-import Input from '@/components/shared/ui/Input.vue'
+import { Button, Input } from '@/components/shared/ui'
 import { Eye, EyeOff } from 'lucide-vue-next'
 
 export default {
@@ -23,7 +22,10 @@ export default {
       showConfirmPassword: false,
     }
   },
-
+  async mounted() {
+    await this.$nextTick()
+    this.$refs.emailInput?.focus()
+  },
   methods: {
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword
@@ -47,7 +49,8 @@ export default {
       } catch (error) {
         this.$toast.showToast({
           title: 'Oh no!',
-          message: 'Something went wrong. Try again' + error,
+          message: 'Something went wrong. Try again',
+          type: 'error',
           critical: true,
         })
       }
@@ -59,9 +62,10 @@ export default {
 <template>
   <div class="register-wrapper">
     <div class="register">
-      <h2 class="title">Register</h2>
+      <h2 class="title typography-heading">Register</h2>
       <form @submit.prevent="handleClickRegister()" class="form">
         <Input
+          ref="emailInput"
           v-model="email"
           type="email"
           name="email"
@@ -77,7 +81,7 @@ export default {
           placeholder="Enter your password"
           required
         >
-          <template #show-password-toggle>
+          <template #icon>
             <button
               type="button"
               class="password-toggle"
@@ -97,7 +101,7 @@ export default {
           placeholder="Confirm your password"
           required
         >
-          <template #show-password-toggle>
+          <template #icon>
             <button
               type="button"
               class="password-toggle"
@@ -113,7 +117,7 @@ export default {
         <Button type="submit">Register</Button>
       </form>
 
-      <p class="auth-link">
+      <p class="auth-link typography-body">
         Already have an account?
         <RouterLink to="/sign-in">Sign In</RouterLink>
       </p>
@@ -145,8 +149,6 @@ export default {
   color: var(--color-primary);
   margin-bottom: var(--space-md);
   text-align: center;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
 }
 .form {
   display: flex;

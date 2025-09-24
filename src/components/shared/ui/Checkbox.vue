@@ -2,7 +2,7 @@
 export default {
   name: 'Checkbox',
   props: {
-    modelValue: {
+    checked: {
       type: Boolean,
       default: false,
     },
@@ -10,19 +10,23 @@ export default {
       type: String,
       default: () => crypto.randomUUID(),
     },
+    label: {
+      type: String,
+      default: '',
+    },
     name: {
       type: String,
       default: '',
     },
   },
-  emits: ['update:modelValue'],
+  emits: ['update:checked'],
   computed: {
     value: {
       get() {
-        return this.modelValue
+        return this.checked
       },
       set(val) {
-        this.$emit('update:modelValue', val)
+        this.$emit('update:checked', val)
       },
     },
   },
@@ -31,8 +35,8 @@ export default {
 
 <template>
   <div class="checkbox">
-    <input type="checkbox" :id :name class="checkbox__input" v-model="value" />
-    <label :for="id" class="checkbox__label"></label>
+    <input type="checkbox" :id="id" :name="name" class="checkbox__input" v-model="value" />
+    <label :for="id" class="checkbox__label">{{ label }}</label>
   </div>
 </template>
 

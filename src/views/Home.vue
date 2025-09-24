@@ -26,13 +26,10 @@ export default {
       </p>
 
       <div class="buttons">
-        <Button @click="goToTasks()">Get Started</Button>
-        <Button
-          variant="outlined"
-          @click="goToSignIn()"
-          v-if="!this.$store.getters['auth/isAuthenticated']"
-          >Sign In</Button
+        <Button @click="goToTasks()" v-if="this.$store.getters['auth/isAuthenticated']"
+          >Get Started</Button
         >
+        <Button @click="goToSignIn()" v-else>Sign In to Get Started</Button>
       </div>
     </div>
   </div>

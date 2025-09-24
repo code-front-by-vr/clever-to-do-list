@@ -1,1 +1,1 @@
-export { toFirestoreTask, fromFirestoreTask, formToTaskData } from './task'
+export { mapTaskToFirestore, mapFirestoreToTask, formToTaskData } from './task'

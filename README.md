@@ -47,7 +47,7 @@
    npm run build
    ```
 
-6. Preview the built application:
+6. Preview the built application locally using Vite:
    ```bash
    npm run preview
    ```
@@ -62,37 +62,6 @@ The application uses **Firebase Firestore** for data storage with the following 
 users/{userId}/tasks/{taskId}
 ```
 
-### Task Object Structure in Application:
-
-```javascript
-{
-  id: "taskId",
-  title: "Task title",
-  description: "Task description",
-  done: false,
-  date: Date // JavaScript Date object
-}
-```
-
-### Task Document Structure in Firestore:
-
-```javascript
-{
-  title: "Task title",
-  description: "Task description",
-  done: false,
-  date: Timestamp // Firebase Timestamp
-}
-```
-
-### Data Transformation:
-
-The application uses **adapters** to convert between application and database formats:
-
-- **`toFirestoreTask(task)`**: Converts JavaScript Date to Firebase Timestamp before saving
-- **`fromFirestoreTask(doc)`**: Converts Firebase Timestamp back to JavaScript Date when reading
-- **`formToTaskData(formData)`**: Converts form data to application task format
-
 ### Database Features:
 
 - **User Authentication**: Firebase Authentication with email/password
@@ -106,19 +75,19 @@ The application uses **adapters** to convert between application and database fo
 ### Core Technologies:
 
 - **[Vue 3](https://vuejs.org/)** - Progressive JavaScript framework
+- **[Vue Router](https://router.vuejs.org/)** - Official router for Vue.js
+- **[Vuex](https://vuex.vuejs.org/)** - State management pattern and library
 - **[Vite](https://vitejs.dev/)** - Fast build tool and development server
 - **[Firebase](https://firebase.google.com/)** - Backend-as-a-Service platform
   - **Firestore** - NoSQL document database
   - **Authentication** - User authentication service
-- **[Vue Router](https://router.vuejs.org/)** - Official router for Vue.js
-- **[Vuex](https://vuex.vuejs.org/)** - State management pattern and library
 
 ### UI & Icons:
 
 - **[Lucide Vue Next](https://lucide.dev/guide/packages/lucide-vue-next)** - Beautiful & consistent icon toolkit
 - **[Vue Virtual Scroller](https://github.com/Akryum/vue-virtual-scroller)** - Efficient virtual scrolling for large lists
 
-### Development Tools:
+### Code Quality and Development Tools:
 
 - **[ESLint](https://eslint.org/)** - JavaScript linting utility
 - **[Prettier](https://prettier.io/)** - Code formatter
@@ -144,55 +113,25 @@ The application uses **adapters** to convert between application and database fo
 
 ```
 src/
-├── api/                      # Firebase API configuration and methods
-│   └── firebase.js          # Firebase initialization and exports
+├── api/                     # Firebase API configuration and methods
 ├── assets/                  # Static assets (CSS, fonts, images)
-│   ├── base.css            # Base styles and CSS resets
-│   ├── fonts.css           # Font imports and definitions
-│   └── main.css            # Main application styles
 ├── components/              # Vue components organized by feature
 │   ├── calendar/           # Calendar-related components
-│   │   └── CalendarDay.vue # Individual calendar day component
 │   ├── shared/             # Reusable shared components
-│   │   ├── layout/         # Layout components (Header, Main)
-│   │   └── ui/             # UI components (Button, Input, Modal, etc.)
+│   │   ├── layout/         # Layout components
+│   │   └── ui/             # UI components
 │   └── task/               # Task-specific components
-│       ├── TaskItem.vue    # Individual task display component
-│       └── TaskModal.vue   # Task creation/editing modal
 ├── config/                 # Application configuration
-│   ├── env.js              # Environment variables validation
-│   └── firebase.js         # Firebase configuration setup
 ├── lib/                    # Utility libraries and adapters
 │   ├── adapters/           # Data transformation adapters
-│   │   ├── index.js        # Adapter exports
-│   │   └── task.js         # Task data transformation logic
-│   ├── utils/              # Utility functions
-│   │   ├── date.js         # Date manipulation utilities
-│   │   ├── index.js        # Utility exports
-│   │   └── theme.js        # Theme-related utilities
-│   └── index.js            # Library exports
+│   └── utils/              # Utility functions
 ├── plugins/                # Vue plugins and extensions
 │   └── toast/              # Toast notification system
-│       ├── index.js        # Toast plugin setup
-│       ├── toast.js        # Toast functionality
-│       └── ToastContainer.vue # Toast display component
 ├── router/                 # Vue Router configuration
-│   ├── index.js            # Router setup and configuration
-│   └── routes.js           # Route definitions
 ├── services/               # Business logic and API services
-│   ├── auth.js             # Authentication service
-│   └── task.js             # Task management service
 ├── store/                  # Vuex state management
-│   ├── modules/            # State modules
-│   │   ├── auth.js         # Authentication state management
-│   │   ├── index.js        # Module exports
-│   │   └── tasks.js        # Tasks state management
-│   └── index.js            # Store configuration
+│   └── modules/            # State modules
 ├── views/                  # Page components (routes)
-│   ├── Home.vue            # Landing page
-│   ├── Register.vue        # User registration page
-│   ├── SignIn.vue          # User sign-in page
-│   └── Tasks.vue           # Main tasks management page
 ├── App.vue                 # Root Vue component
 └── main.js                 # Application entry point
 ```

@@ -4,29 +4,46 @@ import Checkbox from '@/components/shared/ui/Checkbox.vue'
 export default {
   name: 'TaskItem',
   props: {
-    task: {
-      type: Object,
+    id: {
+      type: String,
+      required: true,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      default: '',
+    },
+    date: {
+      type: Date,
+      required: true,
+    },
+    done: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
     taskDone: {
       get() {
-        return this.task.done
+        return this.done
       },
-      set(value) {
+      set() {
         this.toggleTask()
       },
     },
   },
   methods: {
     handleEditTask() {
-      this.$emit('edit', this.task.id)
+      this.$emit('edit')
     },
     handleDeleteTask() {
-      this.$emit('delete', { date: this.task.date, taskId: this.task.id })
+      this.$emit('delete')
     },
     toggleTask() {
-      this.$emit('toggle', this.task.id)
+      this.$emit('toggle')
     },
   },
   components: {
@@ -40,12 +57,12 @@ export default {
 <template>
   <div class="task-item">
     <div class="task-item__content">
-      <Checkbox v-model="taskDone" />
+      <Checkbox v-model:checked="taskDone" />
       <div class="task-item__content-text">
-        <h4 :class="['task-item__title', { 'task-item__title--done': task.done }]">
-          {{ task.title }}
+        <h4 :class="['task-item__title typography-subtitle', { 'task-item--done': done }]">
+          {{ title }}
         </h4>
-        <p class="task-item__descriptions">{{ task.description }}</p>
+        <p class="task-item__descriptions typography-body">{{ description }}</p>
       </div>
     </div>
 
@@ -98,7 +115,7 @@ export default {
   margin: 0;
 }
 
-.task-item__title--done {
+.task-item--done {
   text-decoration: line-through;
 }
 

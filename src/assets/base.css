@@ -23,6 +23,13 @@
   --color-text-muted-light: light-dark(#d0d4dd, #484f58);
   --color-text-inverse: light-dark(#ffffff, #0d1117); /* text on accent background */
 
+  /* Header navigation colors */
+  --color-nav-link: light-dark(var(--color-text-muted-light), var(--color-text-inverse));
+  --color-nav-link-active: light-dark(var(--color-text-inverse), #f0f6fc);
+  --color-nav-underline: light-dark(var(--color-secondary), #ffffff);
+  --color-user-avatar-bg: light-dark(#e1e4e8, #30363d);
+  --color-user-avatar-text: light-dark(#2e2e3a, #f0f6fc);
+
   /* Task status */
   --color-task-done: light-dark(#22c55e, #3fb950); /* completed tasks */
   --color-task-pending: var(--color-primary); /* pending tasks */
@@ -40,6 +47,10 @@
   /* Shadows - adjusted for dark theme */
   --shadow-primary: light-dark(rgba(108, 99, 255, 0.3), rgba(88, 166, 255, 0.4));
   --shadow-primary-hover: light-dark(rgba(108, 99, 255, 0.45), rgba(88, 166, 255, 0.6));
+  --shadow-button-primary: light-dark(
+    0 4px 12px rgba(108, 99, 255, 0.3),
+    0 4px 12px rgba(88, 166, 255, 0.4)
+  );
   --shadow-button-primary-hover: light-dark(
     0 8px 20px rgba(108, 99, 255, 0.45),
     0 8px 20px rgba(88, 166, 255, 0.6)
@@ -69,10 +80,10 @@
   --border-thin-2: 2px solid;
 
   /* Border radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 10px;
-  --radius-xl: 16px;
+  --radius-sm: 0.25em; /* ~4px at 16px font */
+  --radius-md: 0.5em; /* ~8px at 16px font */
+  --radius-lg: 0.6em; /* ~10px at 16px font */
+  --radius-xl: 1em; /* ~16px at 16px font */
   --radius-rounded: 50%;
   --radius-full: 100%;
 
@@ -107,7 +118,7 @@ textarea {
 }
 
 button {
-  border: 0;
+  border: none;
 }
 
 a {
@@ -121,13 +132,15 @@ ul {
 .container {
   max-width: var(--container-wide);
   margin: 0 auto;
-  padding: 0 var(--space-lg);
+  padding: 0 var(--space-2xl);
 
   @media (max-width: 1200px) {
     max-width: var(--container-wide-medium);
+    padding: 0 var(--space-xl);
   }
   @media (max-width: 1024px) {
     max-width: var(--container-medium);
+    padding: 0 var(--space-lg);
   }
   @media (max-width: 768px) {
     max-width: var(--container-normal);

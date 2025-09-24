@@ -20,9 +20,9 @@ export default {
   </button>
 </template>
 
-<style>
+<style scoped>
 .button {
-  --background-color: var(--background-color);
+  --btn-background-color: var(--background-color);
   --border-color: transparent;
   --text-color: var(--text-color);
 
@@ -34,75 +34,87 @@ export default {
   font-size: var(--font-size-base);
   font-weight: var(--fw-semibold);
   border-radius: var(--radius-lg);
-  background-color: var(--background-color);
+  background-color: var(--btn-background-color);
   border: var(--border-thin-2) var(--border-color);
   color: var(--text-color);
-  transition: all 0.3s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.1s ease;
   cursor: pointer;
 }
 .button--primary {
-  --background-color: var(--color-primary);
+  --btn-background-color: var(--color-primary);
   --border-color: var(--color-primary);
   --text-color: var(--color-text-inverse);
-  box-shadow: 0 4px 12px var(--shadow-primary);
+  box-shadow: var(--shadow-button-primary);
 }
 .button--primary:hover,
-.button--primary:focus,
-.button--primary:active {
+.button--primary:focus {
   box-shadow: var(--shadow-button-primary-hover);
-  top: calc(-1 * var(--space-2xs));
+}
+.button--primary:active {
+  transform: translateY(var(--space-2xs));
 }
 
 .button--outlined {
-  --background-color: transparent;
+  --btn-background-color: transparent;
   --border-color: var(--color-primary);
   --text-color: var(--color-primary);
 }
 .button--outlined:hover,
-.button--outlined:focus,
-.button--outlined:active {
-  --background-color: var(--color-primary);
+.button--outlined:focus {
+  --btn-background-color: var(--color-primary);
   --text-color: var(--color-text-inverse);
   box-shadow: var(--shadow-button-primary-hover);
-  top: calc(-1 * var(--space-2xs));
+}
+.button--outlined:active {
+  transform: translateY(var(--space-2xs));
 }
 
 .button--ghost {
-  --background-color: transparent;
+  --btn-background-color: transparent;
   --text-color: var(--color-primary);
 }
 .button--ghost:hover,
-.button--ghost:focus,
-.button--ghost:active {
-  --background-color: var(--color-surface-hover);
+.button--ghost:focus {
+  --btn-background-color: var(--color-surface-hover);
   --text-color: var(--color-primary);
-  top: calc(-1 * var(--space-2xs));
+}
+.button--ghost:active {
+  transform: translateY(var(--space-2xs));
 }
 
 .button--outlined-ghost {
-  --background-color: transparent;
+  --btn-background-color: transparent;
   --border-color: var(--color-border);
   --text-color: var(--color-primary);
 }
 .button--outlined-ghost:hover,
-.button--outlined-ghost:focus,
-.button--outlined-ghost:active {
-  --background-color: var(--color-surface-hover);
+.button--outlined-ghost:focus {
+  --btn-background-color: var(--color-surface-hover);
   --border-color: var(--color-primary);
   --text-color: var(--color-primary);
-  top: calc(-1 * var(--space-2xs));
+}
+.button--outlined-ghost:active {
+  transform: translateY(var(--space-2xs));
 }
 
 .button--danger {
-  --background-color: var(--color-accent-warning);
+  --btn-background-color: var(--color-accent-warning);
   --text-color: var(--color-text-inverse);
   --border-color: var(--color-accent-warning);
 }
 .button--danger:hover,
-.button--danger:focus,
-.button--danger:active {
-  --background-color: var(--color-accent-error);
+.button--danger:focus {
+  --btn-background-color: var(--color-accent-error);
+  --border-color: var(--color-accent-error);
   --text-color: var(--color-text-inverse);
-  top: calc(-1 * var(--space-2xs));
+}
+
+.button--danger:active {
+  transform: translateY(var(--space-2xs));
 }
 </style>

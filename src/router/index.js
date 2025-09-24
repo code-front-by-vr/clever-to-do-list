@@ -10,14 +10,15 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 
-  if (!requiresAuth) {return next()}
+  if (!requiresAuth) {
+    return next()
+  }
 
   const user = await getCurrentUser()
 
   if (user) {
     next()
   } else {
-    alert('You must be logged in to access this page')
     next('/sign-in')
   }
 })

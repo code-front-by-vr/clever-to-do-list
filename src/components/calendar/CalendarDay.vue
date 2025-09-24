@@ -54,7 +54,7 @@ export default {
 
 <style scoped>
 .calendar__day {
-  --_border-color: var(--border-color, transparent);
+  --_border-color: var(--border-color);
 
   /* Fixed width needs for virtual scroller*/
   width: 84px;
@@ -64,22 +64,27 @@ export default {
   border: var(--border-thin-2) var(--_border-color);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-surface);
-  transition: all 0.3s ease;
 
   --calendar-day-outline-color: var(--color-primary);
   outline-color: var(--calendar-day-outline-color) !important;
   cursor: pointer;
+
+  transition: background 0.3s ease;
+}
+
+.calendar__day:hover,
+.calendar__day--selected,
+.calendar__day--selected:hover {
+  box-shadow: var(--shadow-surface);
+  --border-color: var(--color-primary);
 }
 
 .calendar__day:hover {
   background: var(--color-gradient);
-  --border-color: var(--color-border);
-  box-shadow: 0 var(--space-xs) var(--space-sm) var(--shadow-primary);
 }
 
-.calendar__day--selected {
-  outline: var(--border-thin-1) var(--color-primary);
-  --border-color: var(--color-primary);
+.calendar__day--selected:hover {
+  background: var(--color-surface);
 }
 
 .calendar__label {
@@ -115,10 +120,10 @@ export default {
 }
 
 .calendar__day::before {
-  left: 38%;
+  left: calc(50% - var(--space-md));
 }
 .calendar__day::after {
-  left: 53%;
+  left: calc(50% + var(--space-xs));
 }
 
 .calendar__day--pending::before {

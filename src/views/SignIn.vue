@@ -1,22 +1,32 @@
 <script>
-import { loginUser } from '@/api/auth'
+import { loginUser } from '@/services/auth'
 import { RouterLink } from 'vue-router'
-import Button from '@/components/common/Button.vue'
-import Input from '@/components/common/Input.vue'
+import { Button, Input } from '@/components/shared/ui'
+import { Eye, EyeOff } from 'lucide-vue-next'
 
 export default {
   components: {
     Button,
     RouterLink,
     Input,
+    Eye,
+    EyeOff,
   },
   data() {
     return {
       email: '',
       password: '',
+      showPassword: false,
     }
   },
+  async mounted() {
+    await this.$nextTick()
+    this.$refs.emailInput?.focus()
+  },
   methods: {
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword
+    },
     async handleClickSignIn() {
       try {
         const user = await loginUser(this.email, this.password)
@@ -24,8 +34,8 @@ export default {
       } catch (error) {
         this.$toast.showToast({
           title: 'Oh no!',
-          message: 'Something went wrong. Try again',
           type: 'error',
+          message: 'Something went wrong. Try again' + error,
         })
       }
     },
@@ -36,21 +46,41 @@ export default {
 <template>
   <div class="sign-in-wrapper">
     <div class="sign-in">
-      <h2 class="title">Sign In</h2>
+      <h2 class="title typography-heading">Sign In</h2>
       <form @submit.prevent="handleClickSignIn()" class="form">
-        <Input v-model="email" type="email" label="Email" placeholder="Enter your email" required />
+        <Input
+          ref="emailInput"
+          v-model="email"
+          type="email"
+          name="email"
+          label="Email"
+          placeholder="Enter your email"
+          required
+        />
         <Input
           v-model="password"
-          type="password"
+          :type="showPassword ? 'text' : 'password'"
+          name="password"
           label="Password"
           placeholder="Enter your password"
           required
-        />
-
+        >
+          <template #icon>
+            <button
+              type="button"
+              class="password-toggle"
+              @click="togglePasswordVisibility"
+              :aria-label="showPassword ? 'Hide password' : 'Show password'"
+            >
+              <Eye v-if="!showPassword" class="password-toggle__icon" />
+              <EyeOff v-else class="password-toggle__icon" />
+            </button>
+          </template>
+        </Input>
         <Button type="submit">Sign In</Button>
       </form>
 
-      <p class="auth-link">
+      <p class="auth-link typography-body">
         Don't have an account yet?
         <RouterLink to="/register">Register</RouterLink>
       </p>
@@ -82,8 +112,6 @@ export default {
   color: var(--color-primary);
   margin-bottom: var(--space-md);
   text-align: center;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
 }
 .form {
   display: flex;
@@ -112,5 +140,26 @@ export default {
 
 .auth-link a:visited {
   color: var(--color-primary);
+}
+
+.password-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle__icon {
+  width: var(--space-xl);
+  height: var(--space-xl);
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
+}
+
+.password-toggle:hover .password-toggle__icon {
+  color: var(--color-text-primary);
 }
 </style>

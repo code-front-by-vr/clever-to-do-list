@@ -1,28 +1,55 @@
 <script>
-import { Circle, CircleCheck, Edit, Trash2 } from 'lucide-vue-next'
+import { Edit, Trash2 } from 'lucide-vue-next'
+import Checkbox from '@/components/shared/ui/Checkbox.vue'
 export default {
   name: 'TaskItem',
   props: {
-    task: {
-      type: Object,
+    id: {
+      type: String,
+      required: true,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      default: '',
+    },
+    date: {
+      type: Date,
+      required: true,
+    },
+    done: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    taskDone: {
+      get() {
+        return this.done
+      },
+      set() {
+        this.toggleTask()
+      },
     },
   },
   methods: {
     handleEditTask() {
-      this.$emit('edit', this.task.id)
+      this.$emit('edit')
     },
     handleDeleteTask() {
-      this.$emit('delete', this.task.id)
+      this.$emit('delete')
     },
     toggleTask() {
-      this.$emit('toggle', this.task.id)
+      this.$emit('toggle')
     },
   },
   components: {
-    Circle,
-    CircleCheck,
     Edit,
     Trash2,
+    Checkbox,
   },
 }
 </script>
@@ -30,15 +57,13 @@ export default {
 <template>
   <div class="task-item">
     <div class="task-item__content">
-      <CircleCheck
-        v-if="task.done"
-        class="task-item__icon task-item__icon--done"
-        @click="toggleTask()"
-      />
-      <Circle v-else class="task-item__icon" @click="toggleTask()" />
-      <h4 :class="['task-item__title', { 'task-item__title--done': task.done }]">
-        {{ task.title }}
-      </h4>
+      <Checkbox v-model:checked="taskDone" />
+      <div class="task-item__content-text">
+        <h4 :class="['task-item__title typography-subtitle', { 'task-item--done': done }]">
+          {{ title }}
+        </h4>
+        <p class="task-item__descriptions typography-body">{{ description }}</p>
+      </div>
     </div>
 
     <div class="task-item__actions">
@@ -60,26 +85,27 @@ export default {
   padding: var(--space-md) var(--space-xl);
   border-radius: var(--radius-md);
   background-color: var(--color-surface);
-  box-shadow: var(--shadow-primary);
+  box-shadow: var(--shadow-surface);
+  border: var(--border-thin-1) var(--color-border-muted);
+
+  @media (max-width: 1200px) {
+    padding: var(--space-sm) var(--space-lg);
+  }
+  @media (max-width: 1024px) {
+    padding: var(--space-sm) var(--space-md);
+  }
 }
 
 .task-item__content {
   display: flex;
   align-items: center;
   flex: 1;
+  gap: var(--space-lg);
 }
 
-.task-item__icon {
-  width: var(--space-xl);
-  height: var(--space-xl);
-  stroke-width: 2.2;
-  color: var(--color-task-pending);
-  vertical-align: middle;
-  margin-right: var(--space-md);
-}
-
-.task-item__icon--done {
-  color: var(--color-task-done);
+.task-item__content-text {
+  display: flex;
+  flex-direction: column;
 }
 
 .task-item__title {
@@ -89,22 +115,32 @@ export default {
   margin: 0;
 }
 
-.task-item__title--done {
+.task-item--done {
   text-decoration: line-through;
+}
+
+.task-item__descriptions {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
 }
 
 .task-item__actions {
   display: flex;
   gap: var(--space-lg);
   margin-left: var(--space-md);
+
+  @media (max-width: 768px) {
+    gap: var(--space-md);
+    margin-left: var(--space-sm);
+  }
 }
 
 .task-item__button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--space-lg);
-  height: var(--space-lg);
+  width: var(--space-xl);
+  height: var(--space-xl);
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
@@ -112,8 +148,8 @@ export default {
 }
 
 .task-item__icon-action {
-  width: var(--space-lg);
-  height: var(--space-lg);
+  width: var(--space-xl);
+  height: var(--space-xl);
   stroke-width: 2;
   color: var(--color-text-secondary);
   transition: color 0.2s ease;

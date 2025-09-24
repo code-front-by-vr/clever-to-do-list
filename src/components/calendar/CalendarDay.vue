@@ -1,5 +1,5 @@
 <script>
-import { isSameDay } from '@/lib/utils/date'
+import { isSameDay } from '@/lib/utils'
 
 export default {
   name: 'CalendarDay',
@@ -10,14 +10,14 @@ export default {
     },
   },
   computed: {
-    tasksByDay() {
-      return this.$store.getters['tasks/tasksByDate'](this.day.date) || []
+    taskStats() {
+      return this.$store.getters['tasks/taskStatsByDate'](this.day.date)
     },
     hasPending() {
-      return this.tasksByDay.some(task => !task.done)
+      return this.taskStats.hasPending
     },
     hasDone() {
-      return this.tasksByDay.some(task => task.done)
+      return this.taskStats.hasDone
     },
     isSelected() {
       const selectedDate = this.$store.state.tasks.selectedDate
@@ -26,54 +26,65 @@ export default {
   },
   methods: {
     handleSelectDay() {
-      this.$store.commit('tasks/setSelectedDate', this.day.date)
+      this.$emit('select', this.day.date)
     },
   },
 }
 </script>
 
 <template>
-  <div
-    :class="['calendar__day', { 'calendar__day--selected': isSelected }]"
+  <button
+    type="button"
+    :class="[
+      'calendar__day',
+      {
+        'calendar__day--selected': isSelected,
+        'calendar__day--pending': hasPending,
+        'calendar__day--done': hasDone,
+      },
+    ]"
     @click="handleSelectDay"
   >
-    <div class="calendar__label">
+    <span class="calendar__label">
       <span class="calendar__weekday">{{ day.weekday }}</span>
       <span class="calendar__date">{{ day.formattedDate }}</span>
-    </div>
-    <div
-      class="calendar__status"
-      :class="{ 'calendar__status--pending': hasPending, 'calendar__status--done': hasDone }"
-    ></div>
-  </div>
+    </span>
+  </button>
 </template>
 
 <style scoped>
 .calendar__day {
-  --_border-color: var(--border-color, transparent);
+  --_border-color: var(--border-color);
+
+  /* Fixed width needs for virtual scroller*/
+  width: 84px;
   padding: var(--space-md) var(--space-sm);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-xs);
+
   background-color: var(--color-surface);
   border: var(--border-thin-2) var(--_border-color);
   border-radius: var(--radius-md);
+  box-shadow: var(--shadow-surface);
+
+  --calendar-day-outline-color: var(--color-primary);
+  outline-color: var(--calendar-day-outline-color) !important;
   cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 80px;
-  flex-shrink: 0;
+
+  transition: background 0.3s ease;
+}
+
+.calendar__day:hover,
+.calendar__day--selected,
+.calendar__day--selected:hover {
+  box-shadow: var(--shadow-surface);
+  --border-color: var(--color-primary);
 }
 
 .calendar__day:hover {
   background: var(--color-gradient);
-  --border-color: var(--color-text-muted);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px var(--shadow-primary);
 }
 
-.calendar__day--selected {
-  --border-color: var(--color-primary);
+.calendar__day--selected:hover {
+  background: var(--color-surface);
 }
 
 .calendar__label {
@@ -92,27 +103,34 @@ export default {
   font-size: var(--font-size-lg);
   font-weight: var(--fw-medium);
   color: var(--color-text-primary);
+  --calendar__date-status-color: var(--color-text-primary);
+  padding-bottom: var(--space-md);
 }
 
-.calendar__status {
-  display: flex;
-  gap: var(--space-xs);
-}
-
-.calendar__status::before,
-.calendar__status::after {
+.calendar__day::before,
+.calendar__day::after {
   content: '';
-  width: var(--space-sm);
+  position: absolute;
+  bottom: var(--space-sm);
+  transform: translateY(-100%);
   height: var(--space-sm);
+  width: var(--space-sm);
   border-radius: var(--radius-rounded);
-  background-color: transparent;
+  background-color: var(--calendar__date-status-color);
 }
 
-.calendar__status--pending::before {
-  background-color: var(--color-task-pending);
+.calendar__day::before {
+  left: calc(50% - var(--space-md));
+}
+.calendar__day::after {
+  left: calc(50% + var(--space-xs));
 }
 
-.calendar__status--done::after {
-  background-color: var(--color-task-done);
+.calendar__day--pending::before {
+  --calendar__date-status-color: var(--color-task-pending);
+}
+
+.calendar__day--done::after {
+  --calendar__date-status-color: var(--color-task-done);
 }
 </style>

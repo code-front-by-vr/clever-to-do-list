@@ -1,10 +1,9 @@
 export function getRequiredEnvs(names) {
-  const missing = []
   const values = {}
+  const missing = []
 
   for (const name of names) {
     const value = import.meta.env[name]
-
     if (!value) {
       missing.push(name)
     } else {
@@ -13,8 +12,10 @@ export function getRequiredEnvs(names) {
   }
 
   if (missing.length > 0) {
-    alert(`❌ Missing environment variables:\n${missing.map(v => `- ${v}`).join('\n')}`)
-    throw new Error(`❌ Missing environment variables:\n${missing.map(v => `- ${v}`).join('\n')}`)
+    const missingList = missing.map(v => `- ${v}`).join('\n')
+    const message = `❌ Missing environment variables:\n${missingList}`
+    alert(message)
+    throw new Error(message)
   }
 
   return values

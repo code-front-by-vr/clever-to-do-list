@@ -28,3 +28,10 @@ export const getCurrentUser = () => {
     })
   })
 }
+
+export function requiresUserId(user) {
+  if (!user?.uid) {
+    throw new Error('Authentication required')
+  }
+  return user.uid
+}

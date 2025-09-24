@@ -25,7 +25,9 @@ export default {
       if (index === -1) return
 
       const toast = toasts[index]
-      if (toast.timeoutId) clearTimeout(toast.timeoutId)
+      if (toast.timeoutId) {
+        clearTimeout(toast.timeoutId)
+      }
 
       toasts.splice(index, 1)
     }

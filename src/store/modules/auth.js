@@ -1,4 +1,4 @@
-import { registerUser, loginUser, logoutUser } from '@/api/auth'
+import { registerUser, loginUser, logoutUser } from '@/services/auth'
 
 export default {
   namespaced: true,
@@ -7,12 +7,13 @@ export default {
   }),
   getters: {
     isAuthenticated: state => !!state.user,
+    userId: state => state.user?.uid || null,
   },
   mutations: {
-    setUser(state, user) {
+    SET_USER(state, user) {
       state.user = user
     },
-    clearUser(state) {
+    CLEAR_USER(state) {
       state.user = null
     },
   },
@@ -20,7 +21,7 @@ export default {
     async register({ commit }, { email, password }) {
       try {
         const user = await registerUser(email, password)
-        commit('setUser', user)
+        commit('SET_USER', user)
         return user
       } catch (err) {
         console.log('Auth/register error: ', err.message)
@@ -30,7 +31,7 @@ export default {
     async login({ commit }, { email, password }) {
       try {
         const user = await loginUser(email, password)
-        commit('setUser', user)
+        commit('SET_USER', user)
         return user
       } catch (err) {
         console.log('Auth/login error: ', err.message)
@@ -40,7 +41,7 @@ export default {
     async logout({ commit }) {
       try {
         await logoutUser()
-        commit('clearUser')
+        commit('CLEAR_USER')
       } catch (err) {
         console.log('Auth/logout error: ', err.message)
         throw err

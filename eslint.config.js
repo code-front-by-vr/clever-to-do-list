@@ -46,11 +46,12 @@ export default defineConfig([
     rules: {
       'no-console': 'warn',
       'no-debugger': 'warn',
-      'no-unused-vars': 'error',
+      'no-unused-vars': 'warn',
       'no-var': 'error',
       eqeqeq: 'error',
       curly: 'error',
       'vue/multi-word-component-names': 'off',
+      'vue/no-reserved-component-names': 'off',
     },
   },
 ])

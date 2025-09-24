@@ -1,63 +1,77 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;600;700&display=swap');
+@import './fonts.css';
 
 :root {
+  color-scheme: light dark;
+
   /* Brand colors */
-  --color-primary: #6c63ff; /*  main accent */
-  --color-secondary: #00cfff; /* secondary accent */
+  --color-primary: light-dark(#6c63ff, #58a6ff); /* main accent  */
+  --color-secondary: light-dark(#00cfff, #79c0ff); /* secondary accent  */
 
   /* Backgrounds */
-  --color-bg: #f7f7f7; /* background */
-  --color-surface: #ffffff; /* cards, blocks on background */
-  --color-gradient: linear-gradient(135deg, var(--color-bg) 0%, #e8e8ff 100%);
+  --color-bg: light-dark(#f7f7f7, #0d1117); /* main background */
+  --color-surface: light-dark(#ffffff, #161b22); /* cards, blocks on background */
+  --color-surface-hover: light-dark(#f8f9fa, #21262d); /* hover states for surfaces */
+  --color-gradient: light-dark(
+    linear-gradient(135deg, #f7f7f7 0%, #e8e8ff 100%),
+    linear-gradient(135deg, #0d1117 0%, #161b22 100%)
+  );
 
-  /* Text */
-  --color-text-primary: #2e2e3a; /* headings, main text */
-  --color-text-secondary: #78818e; /* descriptions, subheadings */
-  --color-text-muted: #a9b2bd; /* dates, placeholders */
-  --color-text-inverse: #ffffff; /* text on dark or accent background */
+  /* Text colors */
+  --color-text-primary: light-dark(#2e2e3a, #f0f6fc); /* headings, main text */
+  --color-text-secondary: light-dark(#78818e, #8b949e); /* descriptions, subheadings */
+  --color-text-muted: light-dark(#a9b2bd, #6e7681); /* dates, placeholders */
+  --color-text-muted-light: light-dark(#d0d4dd, #484f58);
+  --color-text-inverse: light-dark(#ffffff, #0d1117); /* text on accent background */
+
+  /* Header navigation colors */
+  --color-nav-link: light-dark(var(--color-text-muted-light), var(--color-text-inverse));
+  --color-nav-link-active: light-dark(var(--color-text-inverse), #f0f6fc);
+  --color-nav-underline: light-dark(var(--color-secondary), #ffffff);
+  --color-user-avatar-bg: light-dark(#e1e4e8, #30363d);
+  --color-user-avatar-text: light-dark(#2e2e3a, #f0f6fc);
 
   /* Task status */
-  --color-task-done: #22c55e; /* completed tasks */
+  --color-task-done: light-dark(#22c55e, #3fb950); /* completed tasks */
   --color-task-pending: var(--color-primary); /* pending tasks */
 
-  /* System / feedback */
-  --color-accent-warning: #ff6b35; /* errors, toasts */
-  --color-accent-warning-rgb: 255, 107, 53;
-  --color-task-done-rgb: 34, 197, 94;
+  /* System / feedback colors */
+  --color-accent-warning: light-dark(#ff6b35, #f85149); /* warnings, errors */
+  --color-accent-warning-rgb: light-dark(255 107 53, 248 81 73);
+  --color-accent-error: light-dark(#dc2626, #da3633); /* severe errors, danger actions */
+  --color-task-done-rgb: light-dark(34 197 94, 63 185 80);
 
-  /* Shadows */
-  --shadow-primary: rgba(108, 99, 255, 0.3);
-  --shadow-primary-hover: rgba(108, 99, 255, 0.45);
-  --shadow-button-primary-hover: 0 8px 20px var(--shadow-primary-hover);
+  /* Borders */
+  --color-border: light-dark(#e1e4e8, #30363d); /* default borders */
+  --color-border-muted: light-dark(#f0f0f0, #21262d); /* subtle borders */
+
+  /* Shadows - adjusted for dark theme */
+  --shadow-primary: light-dark(rgba(108, 99, 255, 0.3), rgba(88, 166, 255, 0.4));
+  --shadow-primary-hover: light-dark(rgba(108, 99, 255, 0.45), rgba(88, 166, 255, 0.6));
+  --shadow-button-primary: light-dark(
+    0 4px 12px rgba(108, 99, 255, 0.3),
+    0 4px 12px rgba(88, 166, 255, 0.4)
+  );
+  --shadow-button-primary-hover: light-dark(
+    0 8px 20px rgba(108, 99, 255, 0.45),
+    0 8px 20px rgba(88, 166, 255, 0.6)
+  );
+  --shadow-surface: light-dark(0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.5));
+  --shadow-modal-backdrop: light-dark(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7));
+  --shadow-modal: light-dark(0 8px 24px rgba(0, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.4));
 
   /* Gradients */
-  --gradient-primary: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  --gradient-primary: light-dark(
+    linear-gradient(90deg, #6c63ff 0%, #00cfff 100%),
+    linear-gradient(90deg, #58a6ff 0%, #79c0ff 100%)
+  );
 
   /* Layout */
   --container-narrow: 400px; /* mobile */
   --container-normal: 600px; /* small tablets */
   --container-medium: 768px; /* tablets / small desktop */
+  --container-wide-medium: 960px; /* tablets / small desktop */
   --container-wide: 1200px; /* large desktop */
   --container-xl: 1440px; /* extra large desktop */
-
-  /* Typography */
-  --font-interface: 'Inter', sans-serif;
-  --font-content: 'Roboto', sans-serif;
-  --font-size-sm: 14px;
-  --font-size-base: 16px;
-  --font-size-md: 18px;
-  --font-size-lg: 20px;
-  --font-size-xl: 24px;
-  --font-size-2xl: 32px;
-  --font-size-3xl: 40px;
-  --font-size-4xl: 48px;
-  --font-size-5xl: 64px;
-
-  /* Font weights */
-  --fw-regular: 400;
-  --fw-medium: 500;
-  --fw-semibold: 600;
-  --fw-bold: 700;
 
   /* Borders */
   --border-transparent: 1px solid transparent;
@@ -66,14 +80,15 @@
   --border-thin-2: 2px solid;
 
   /* Border radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 10px;
-  --radius-xl: 16px;
+  --radius-sm: 0.25em; /* ~4px at 16px font */
+  --radius-md: 0.5em; /* ~8px at 16px font */
+  --radius-lg: 0.6em; /* ~10px at 16px font */
+  --radius-xl: 1em; /* ~16px at 16px font */
   --radius-rounded: 50%;
   --radius-full: 100%;
 
   /* Spacing */
+  --space-2xs: 0.125rem;
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
   --space-md: 0.75rem;
@@ -82,6 +97,7 @@
   --space-2xl: 1.5rem;
   --space-3xl: 2rem;
   --space-4xl: 2.5rem;
+  --space-5xl: 3.5rem;
   --space-6xl: 5rem;
 }
 
@@ -90,30 +106,43 @@
   padding: 0;
   box-sizing: border-box;
 }
-button,
-a,
-ul {
-  border: 0;
-  text-decoration: none;
-  list-style: none;
-}
 
 body {
   font-display: swap;
   background-color: var(--color-bg);
   color: var(--color-text-primary);
-  font-family: var(--font-content), var(--font-interface), system-ui, sans-serif;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-button,
-input,
-select,
-textarea,
-.form-control,
-.nav,
-.header {
-  font-family: var(--font-interface);
+textarea {
+  box-sizing: content-box;
+}
+
+button {
+  border: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+.container {
+  max-width: var(--container-wide);
+  margin: 0 auto;
+  padding: 0 var(--space-2xl);
+
+  @media (max-width: 1200px) {
+    max-width: var(--container-wide-medium);
+    padding: 0 var(--space-xl);
+  }
+  @media (max-width: 1024px) {
+    max-width: var(--container-medium);
+    padding: 0 var(--space-lg);
+  }
+  @media (max-width: 768px) {
+    max-width: var(--container-normal);
+  }
 }

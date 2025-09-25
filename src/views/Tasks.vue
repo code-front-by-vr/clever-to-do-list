@@ -1,0 +1,468 @@
+<script>
+import { RecycleScroller } from 'vue-virtual-scroller'
+import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { Button, ConfirmModal } from '@/components/shared/ui'
+import TaskModal from '@/components/task/TaskModal.vue'
+import TaskItem from '@/components/task/TaskItem.vue'
+import CalendarDay from '@/components/calendar/CalendarDay.vue'
+import { generateCalendarDays, formatMonthYear, isSameDay, throttle } from '@/lib/utils'
+
+const CALENDAR_ITEM_SIZE = 100
+
+export default {
+  data() {
+    return {
+      today: new Date(),
+      days: [],
+      itemSize: CALENDAR_ITEM_SIZE,
+      taskId: null,
+      loadingDays: false,
+      currentMonthYear: '',
+      taskToDelete: null,
+    }
+  },
+  computed: {
+    tasksByDate() {
+      return this.$store.getters['tasks/tasksByDate'](this.$store.state.tasks.selectedDate) || []
+    },
+    taskStats() {
+      return this.$store.getters['tasks/taskStatsByDate'](this.$store.state.tasks.selectedDate)
+    },
+  },
+  methods: {
+    handleAddTask() {
+      this.$refs.taskModalRef?.open()
+    },
+    handleEditTask(taskId) {
+      this.$refs.taskModalRef?.open(taskId)
+    },
+    handleDeleteTask({ date, taskId }) {
+      if (!taskId) {
+        console.error('Task ID is missing:', taskId)
+        return
+      }
+      this.taskToDelete = { date, taskId }
+      this.$refs.confirmModalRef.open()
+    },
+    handleConfirmDelete() {
+      if (this.taskToDelete) {
+        this.$store.dispatch('tasks/deleteTask', this.taskToDelete)
+        this.taskToDelete = null
+        this.$refs.confirmModalRef.close()
+      }
+    },
+    handleCancelDelete() {
+      this.taskToDelete = null
+    },
+    handleToggleTask(taskId) {
+      const task = this.$store.getters['tasks/taskById'](taskId)
+      const updatedTask = { ...task, done: !task.done }
+      this.$store.dispatch('tasks/updateTask', updatedTask)
+    },
+
+    async fetchMoreDays() {
+      if (this.loadingDays) {
+        return
+      }
+      this.loadingDays = true
+
+      const lastDay = this.days[this.days.length - 1].date
+      const startNextMonth = new Date(lastDay.getFullYear(), lastDay.getMonth() + 1, 1)
+      const endNextMonth = new Date(lastDay.getFullYear(), lastDay.getMonth() + 2, 0)
+
+      const newDays = generateCalendarDays(startNextMonth, endNextMonth)
+      this.days.push(...newDays)
+
+      try {
+        await this.$store.dispatch('tasks/fetchTasksForTheMonth', {
+          year: startNextMonth.getFullYear(),
+          month: startNextMonth.getMonth(),
+        })
+      } catch (error) {
+        console.error('Tasks fetchMoreDays error:', error)
+      } finally {
+        this.loadingDays = false
+      }
+    },
+
+    updateCurrentMonthYear: throttle(function () {
+      const scrollerEl = this.$refs.calendarScroller?.$el
+      if (!scrollerEl) {
+        return
+      }
+
+      const scrollLeft = scrollerEl.scrollLeft
+      const index = Math.floor(scrollLeft / this.itemSize)
+      const day = this.days[index]
+      if (day) {
+        this.currentMonthYear = formatMonthYear(day.date)
+      }
+    }, 60),
+
+    handleDayClick(date) {
+      this.$store.commit('tasks/SET_SELECTED_DATE', date)
+
+      const scroller = this.$refs.calendarScroller
+      const index = this.days.findIndex(day => isSameDay(day.date, date))
+      if (index === -1) {
+        return
+      }
+
+      scroller.scrollToItem(index, { align: 'start' })
+    },
+
+    handleMovePendingTasks() {
+      const selectedDate = this.$store.state.tasks.selectedDate
+      this.$store.dispatch('tasks/movePendingTasksToNextDay', selectedDate)
+    },
+
+    handleScrollEnd() {
+      this.fetchMoreDays()
+      this.updateCurrentMonthYear()
+    },
+
+    scrollLeft() {
+      const scroller = this.$refs.calendarScroller?.$el
+      if (!scroller) {
+        return
+      }
+
+      scroller.scrollBy({ left: -3 * CALENDAR_ITEM_SIZE })
+    },
+    scrollRight() {
+      const scroller = this.$refs.calendarScroller?.$el
+      if (!scroller) {
+        return
+      }
+
+      scroller.scrollBy({ left: 3 * CALENDAR_ITEM_SIZE })
+    },
+
+    scrollToToday() {
+      this.$nextTick(() => {
+        const container = this.$refs.calendarScroller?.$el
+        if (!container) {
+          return
+        }
+
+        const index = this.days.findIndex(day => isSameDay(day.date, this.today))
+        if (index === -1) {
+          return
+        }
+
+        const offset = index * this.itemSize
+
+        container.scrollTo({ left: offset })
+      })
+
+      this.$store.commit('tasks/SET_SELECTED_DATE', this.today)
+    },
+  },
+  async mounted() {
+    try {
+      const endOfMonth = new Date(this.today.getFullYear(), this.today.getMonth() + 1, 0)
+      this.days = generateCalendarDays(this.today, endOfMonth)
+
+      await this.$store.dispatch('tasks/fetchTasksForTheMonth', {
+        year: this.today.getFullYear(),
+        month: this.today.getMonth(),
+      })
+      this.$store.commit('tasks/SET_SELECTED_DATE', this.today)
+
+      this.currentMonthYear = formatMonthYear(this.today)
+
+      const scrollerEl = this.$refs.calendarScroller?.$el
+      if (scrollerEl) {
+        scrollerEl.addEventListener('scroll', this.updateCurrentMonthYear)
+      }
+    } catch (error) {
+      console.error('Tasks mounted error:', error)
+    }
+  },
+  beforeUnmount() {
+    const scrollerEl = this.$refs.calendarScroller?.$el
+    if (scrollerEl) {
+      scrollerEl.removeEventListener('scroll', this.updateCurrentMonthYear)
+    }
+  },
+  components: {
+    Button,
+    TaskModal,
+    TaskItem,
+    CalendarDay,
+    ConfirmModal,
+    RecycleScroller,
+    ChevronLeft,
+    ChevronRight,
+  },
+}
+</script>
+
+<template>
+  <div class="tasks">
+    <div class="calendar">
+      <button class="calendar__nav calendar__nav-left" @click="scrollLeft">
+        <ChevronLeft class="nav-icon" />
+      </button>
+      <div class="calendar__header">
+        <Button variant="outlined-ghost" @click="scrollToToday" class="calendar__today-button"
+          >Today</Button
+        >
+        <h3 class="calendar__month-year">{{ currentMonthYear }}</h3>
+      </div>
+      <RecycleScroller
+        ref="calendarScroller"
+        class="task__calendar"
+        :items="days"
+        key-field="id"
+        :item-size="itemSize"
+        direction="horizontal"
+        @scroll-end="handleScrollEnd"
+        v-slot="{ item }"
+        :buffer="1000"
+      >
+        <CalendarDay :day="item" :key="item.id" @select="handleDayClick" />
+      </RecycleScroller>
+      <button class="calendar__nav calendar__nav-right" @click="scrollRight">
+        <ChevronRight class="nav-icon" />
+      </button>
+    </div>
+
+    <div class="tasks__container" ref="tasksContainer">
+      <div class="tasks__header">
+        <h2 v-if="tasksByDate.length > 0" class="tasks__title">
+          Tasks today: {{ tasksByDate.length }}
+        </h2>
+        <h2 v-else class="tasks__title">No tasks</h2>
+        <div class="tasks__actions">
+          <Button
+            v-if="taskStats.hasPending"
+            class="tasks__button"
+            variant="outlined"
+            @click="handleMovePendingTasks"
+          >
+            Move uncompleted tasks to the next day
+          </Button>
+          <Button class="tasks__button" @click="handleAddTask()">Add Task</Button>
+        </div>
+      </div>
+      <div class="task__list">
+        <TaskItem
+          v-for="task in tasksByDate"
+          :key="task.id"
+          v-bind="task"
+          @edit="() => handleEditTask(task.id)"
+          @delete="() => handleDeleteTask({ date: task.date, taskId: task.id })"
+          @toggle="() => handleToggleTask(task.id)"
+        />
+      </div>
+    </div>
+
+    <TaskModal ref="taskModalRef" />
+    <ConfirmModal
+      ref="confirmModalRef"
+      title="Delete Task"
+      message="Are you sure you want to delete this task? This action cannot be undone."
+      confirm-text="Delete"
+      cancel-text="Cancel"
+      :is-destructive="true"
+      @confirm="handleConfirmDelete"
+      @cancel="handleCancelDelete"
+    />
+  </div>
+</template>
+
+<style scoped>
+.tasks {
+  max-width: var(--container-wide);
+  height: 100%;
+  padding: var(--space-5xl) var(--space-lg) var(--space-3xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+
+  @media (max-width: 1200px) {
+    max-width: var(--container-medium);
+  }
+}
+
+.calendar {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.calendar__header {
+  position: absolute;
+  top: calc(-1 * var(--space-4xl));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  max-width: var(--container-wide);
+  width: 100%;
+  justify-content: center;
+  gap: var(--space-lg);
+  z-index: 1;
+}
+.calendar__today-button {
+  position: absolute;
+  left: 0;
+  cursor: pointer;
+  padding: var(--space-sm) var(--space-md);
+  @media (max-width: 1024px) {
+    padding: var(--space-sm) var(--space-xl);
+    font-size: var(--font-size-md);
+  }
+}
+
+.calendar__month-year {
+  font-size: var(--font-size-xl);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-primary);
+  text-align: center;
+  margin: 0 auto;
+}
+
+.calendar__nav {
+  position: absolute;
+  top: calc(50% - var(--space-md) / 2);
+  transform: translateY(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-2xl);
+  height: var(--space-2xl);
+  border: var(--border-thin-1) var(--color-border);
+  border-radius: var(--radius-rounded);
+  background: var(--color-surface);
+  opacity: 0.9;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition:
+    background 0.3s,
+    transform 0.2s;
+}
+
+.calendar__nav:hover {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  opacity: 1;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 var(--space-xs) var(--space-md) var(--shadow-primary-hover);
+}
+
+.calendar__nav-left {
+  left: calc(-1 * var(--space-2xl) - var(--space-sm));
+}
+.calendar__nav-right {
+  right: calc(-1 * var(--space-2xl) - var(--space-sm));
+}
+
+.task__calendar {
+  /* For correct work of vue-virtual-scroller*/
+  height: 100px;
+  overflow-x: auto;
+  overflow-y: visible;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-text-muted) transparent;
+  scroll-behavior: smooth;
+}
+
+.task__calendar::-webkit-scrollbar {
+  height: var(--space-xs);
+}
+
+.task__calendar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: var(--radius-sm);
+}
+
+.task__calendar::-webkit-scrollbar-thumb {
+  background: var(--color-text-muted);
+  border-radius: var(--radius-sm);
+}
+
+.task__calendar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
+}
+.tasks__container {
+  padding: 0 var(--space-6xl);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: var(--space-4xl);
+
+  @media (max-width: 1200px) {
+    padding: 0 var(--space-xl);
+    gap: var(--space-2xl);
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 var(--space-lg);
+    gap: var(--space-xl);
+  }
+}
+
+.tasks__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+
+  @media (max-width: 1024px) {
+    margin-bottom: var(--space-sm);
+  }
+}
+
+.tasks__title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-primary);
+  margin: 0;
+  white-space: nowrap;
+
+  @media (max-width: 1024px) {
+    font-size: var(--font-size-xl);
+  }
+
+  @media (max-width: 768px) {
+    font-size: var(--font-size-lg);
+  }
+}
+
+.task__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  max-width: var(--container-normal);
+  width: 100%;
+  margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 0 var(--space-xl);
+  }
+}
+
+.tasks__actions {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+
+  @media (max-width: 1024px) {
+    gap: var(--space-sm);
+  }
+}
+
+.tasks__button {
+  padding: var(--space-sm) var(--space-2xl);
+  font-size: var(--font-size-md);
+  white-space: nowrap;
+
+  @media (max-width: 1024px) {
+    padding: var(--space-sm) var(--space-lg);
+    font-size: var(--font-size-sm);
+    flex-shrink: 0;
+  }
+}
+</style>

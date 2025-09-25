@@ -1,11 +1,28 @@
-import './assets/main.css'
+import '@/assets/main.css'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
-import {createApp} from 'vue'
+import { createApp } from 'vue'
 import App from './App.vue'
-import router from './router'
+import router from '@/router'
+import store from '@/store'
+import { ToastPlugin } from '@/plugins/toast'
+import VueVirtualScroller from 'vue-virtual-scroller'
+import { onAuthStateChanged, auth } from '@/api/firebase'
+import { initializeTheme } from '@/lib/utils'
+
+initializeTheme()
 
 const app = createApp(App)
 
-app.use(router)
+app.use(ToastPlugin).use(store).use(router)
 
+onAuthStateChanged(auth, user => {
+  if (user) {
+    store.commit('auth/SET_USER', user)
+  } else {
+    store.commit('auth/CLEAR_USER')
+  }
+})
+
+app.use(VueVirtualScroller)
 app.mount('#app')
